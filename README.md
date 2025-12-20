@@ -1,148 +1,57 @@
-# Wan2.2-Enhanced
+# Wan2.2-Enhanced Performance Benchmark
 
-Wan2.2-Enhanced 是针对 Wan2.2 视频生成模型的增强与性能分析工具库。本项目旨在提供详细的显存与延迟监控，优化推理流程，并评估模型在不同硬件架构（如 NVIDIA RTX 4090 与 RTX PRO 6000）上的运行表现与性价比。
+## 1. 项目目标
+本项目旨在评估并对比 **Wan2.2-5B** 模型在 **NVIDIA RTX 4090** 和 **NVIDIA RTX PRO 6000 Blackwell** 两种不同 GPU 架构上的视频生成性能。
+重点记录详细的 **显存消耗 (Memory Usage)** 和 **计算资源消耗 (Compute Load/SM Activity)**，为硬件选型和生产环境部署提供参考。
 
-## 主要功能
+## 2. 环境参数
+- **Hardware Group A**: NVIDIA RTX 4090 (24GB VRAM) - 代表消费级旗舰。
+- **Hardware Group B**: NVIDIA RTX PRO 6000 Blackwell (96GB VRAM) - 代表新一代高性能工作站/服务器显卡。
+- **Software Environment**:
+  - OS: Linux
+  - Codebase: Wan2.2-Enhanced
+  - Model: Wan2.2-TI2V-5B (50亿参数)
 
-- **深度性能监控**: 集成 `PerformanceMonitor`，精确记录模型加载、文本编码、扩散采样及 VAE 解码各阶段的耗时与显存变化（起始/峰值/激活显存）。
-- **计算量化分析**: 新增 GPU SM Activity (流处理器活跃度) 监控，引入 `compute_load` 指标，精确量化视频生成的实际计算负载，区分 I/O 密集型与计算密集型阶段。
-- **显存优化**: 支持模型卸载（Offload）策略，在消费级显卡上运行大参数模型。
-- **自动化报告**: 自动生成 JSON 格式的性能报告，并提供 `format_report.py` 工具生成包含 SM 活跃度和计算负载分析的专业可视化报表。
+## 3. 测试场景
+测试对象为 **Wan2.2-TI2V-5B** (图生视频任务)，覆盖以下典型应用场景：
 
-## 最新项目目标
+1.  **Speed Preview (快速预览)**
+    *   分辨率: 480p (832x480)
+    *   采样步数: 5 Steps
+    *   策略: Offload=True (显存优化)
+    *   *目的: 快速验证提示词效果*
 
-当前阶段的主要目标是**评估并对比 Wan2.2-TI2V-5B 模型在 NVIDIA RTX 4090 和 NVIDIA RTX PRO 6000 两种不同 GPU 卡型上的性能表现**。
+2.  **Efficiency Mode (效率模式)**
+    *   分辨率: 720p (1280x720)
+    *   采样步数: 10 Steps
+    *   策略: Offload=True (开启显存卸载)
+    *   *目的: 在有限显存下生成标准质量视频*
 
-### 核心关注点
-- **性能基准**: 记录两种卡型上的视频生成总耗时及各阶段耗时。
-- **硬件适配**: 监控显存消耗峰值，评估硬件适配性。
-- **性价比分析**: 基于 FLOPS 和实际生成时间，结合硬件成本，测算 5B 模型在不同硬件上的性价比，为部署选型提供参考。
+3.  **Performance Mode (高性能模式)**
+    *   分辨率: 720p (1280x720)
+    *   采样步数: 10 Steps
+    *   策略: Offload=False (关闭显存卸载)
+    *   *目的: 测试最大显存占用与最低延迟*
 
-## 视频生成性能测试方案
+## 4. 测试方案
+本项目集成 `PerformanceMonitor` 工具与自动化测试脚本 (`benchmark/run.py`)，采集以下核心指标：
 
-### 1. 测试环境
-- **硬件对比组**:
-  - **Group A**: NVIDIA RTX 4090 (24GB VRAM) - 代表消费级旗舰。
-  - **Group B**: NVIDIA RTX PRO 6000 Blackwell (96GB VRAM) - 代表新一代高性能工作站/服务器显卡。
-- **软件环境**:
-  - 操作系统: Linux
-  - 代码库: Wan2.2-Enhanced
+*   **SM Activity (流处理器活跃度)**: 反映 GPU 计算核心利用率，接近 100% 表示算力满载。
+*   **Compute Load (计算负载)**: 计算公式 `Duration * SM_Activity`，量化有效计算工作量。
+*   **Peak Memory (峰值显存)**: 记录生成过程中的最高显存占用。
 
-### 2. 测试对象
-- **Wan2.2-TI2V-5B** (图生视频, 50亿参数)
-  - 选择理由：5B 模型兼顾质量与速度，且能适配 24GB 显存，适合作为跨卡对比基准。
-
-### 3. 性能测试 (Performance Profiling)
-
-本项目集成了 `PerformanceMonitor` 工具，可自动记录显存使用和各阶段耗时。
-
-#### **关键指标定义**
-为了准确解读测试报告，请参考以下定义：
-
-*   **SM Activity (流处理器活跃度)**:
-    *   反映 GPU 计算核心（Streaming Multiprocessors）的繁忙程度。
-    *   **高数值 (~90-100%)**: 表示处于计算密集型阶段（如 DiT 推理），GPU 算力被充分利用。
-    *   **低数值 (<20%)**: 表示瓶颈可能在 CPU 处理、内存拷贝 (H2D/D2H) 或磁盘 I/O。
-*   **Compute Load (计算负载)**:
-    *   计算公式: `Duration (s) * SM_Activity (%)`。
-    *   该指标用于量化实际的“有效计算量”。例如，模型加载阶段虽然耗时通过，但 SM 活跃度低，因此计算负载低；而推理阶段虽然时间可能较短，但计算负载极高。
-*   **常驻显存 (Static Memory)**: 
-    *   指模型权重、偏置等在推理阶段开始前就已经占用且持续存在的显存。
-    *   *注*: 在开启模型卸载 (`--offload_model`) 时，非活跃模型的权重不会计入常驻显存。
-*   **动态显存 (Dynamic Memory)**: 
-    *   指推理过程中临时申请并释放的显存。
-    *   **构成**: 主要包含 **中间激活值 (Activations)**（Feature Maps, Attention矩阵）和 **临时缓冲区**。在视频生成任务中，Feature Maps 是动态显存的主要消耗者，而非 KV Cache。
-    *   *注*: 在开启模型卸载时，临时加载的模型权重也会体现在动态显存的峰值中。
-*   **显存峰值 (Peak Memory)**:
-    *   整个生成过程中显存占用的最高点。这是决定硬件是否能够运行该模型的“硬门槛”。
-
-#### **测试报告生成与分析**
-本项目支持两种测试方式：
-
-**方式一：自动化基准测试（推荐）**
-使用 `benchmark/run.py` 可一键执行多组测试并自动生成汇总报告（详见下文“自动化基准测试套件”章节）。
-
-**方式二：手动单次测试**
-运行生成脚本后，会自动保存 JSON 格式的性能日志。使用 `format_report.py` 可将其转换为包含 SM 分析的专业文本报告：
-
+执行命令：
 ```bash
-# 1. 运行生成任务
-python generate.py ... --report_file test_report.json
-
-# 2. 生成分析报告
-python format_report.py test_report.json
+python3 benchmark/run.py
 ```
 
-**报告示例片段**:
-```text
-[Execution Trace Analysis]
--------------------------------------------------------------------------------------------------------------------------------------------------
-Stage Name                | Time (s) |  SM % |   Load | Mem Start |   Mem End |  Peak Mem |     Mem Δ | Comment
--------------------------------------------------------------------------------------------------------------------------------------------------
-Model_Initialization      |    38.43 |   0.0 |    1.0 |      0.00 |      0.49 |      0.49 |      0.49 | Sys Init
-S0_Loading                |     5.90 |  22.3 |  131.7 |      0.50 |     53.73 |     53.73 |     53.23 | Model Load
-S0                        |     2.71 | 100.0 |  271.1 |     53.73 |     53.75 |     56.98 |      0.02 | Compute Heavy
-```
+## 5. 测试结果
+以下为 **Group B (RTX PRO 6000 Blackwell)** 的实测数据：
 
-### 4. 关键生成参数说明
-为了满足不同场景下的生成需求，`generate.py` 支持多种参数配置：
+| Case | Res | Offload | Time (s) | Mem (GB) | SM Act (%) | Compute Load |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **01_Speed_Preview** | 1280*704 | ✅ True | 122.62 | 31.27 | 97.0 | 11,533 |
+| **02_Efficiency_Mode** | 1280*704 | ✅ True | 156.46 | 31.27 | 99.9 | 18,662 |
+| **03_Performance_Mode** | 1280*704 | ❌ False | 146.78 | 42.17 | 100.0 | 18,589 |
 
-- **视频规格**:
-  - `--size`: 视频分辨率 (如 `1280*720`, `832*480`)。
-  - `--frame_num`: 生成帧数 (需满足 4n+1，如 `81` 帧约为 5秒)。
-- **生成质量**:
-  - `--sample_steps`: 扩散采样步数 (默认 50)，步数越高画质越精细，但耗时增加。
-  - `--sample_guide_scale`: 文本引导系数 (CFG Scale)，控制生成内容与提示词的贴合度。
-- **模型精度**:
-  - 本项目默认使用 **BF16 (bfloat16)** 精度进行加载和推理，以在保持生成质量的同时提供较好的数值稳定性。
-- **性能优化**:
-  - `--offload_model`: `True`/`False`。开启后在推理间隙将模型卸载至 CPU，显著降低显存占用 (代价是增加了 CPU-GPU 传输耗时)。
-  - `--t5_cpu`: 将文本编码器 T5 放置在 CPU 上运行，节省显存。
-  - `--ulysses_size`: 开启 Ulysses 上下文并行 (用于多卡推理)。
-
-### 5. 自动化基准测试套件 (Automated Benchmark Suite)
-
-为了简化多场景下的性能测试与参数调优，本项目提供了完整的自动化测试工具链，位于 `benchmark/` 目录下。
-
-#### **核心组件**
-*   **`benchmark/config.json`**: 测试配置模版。支持定义全局设置（如模型路径、提示词）和多个独立的测试用例（如不同分辨率、不同卸载策略）。
-*   **`benchmark/run.py`**: 自动化执行脚本。它会读取配置，依次运行所有测试用例，并自动调用分析工具生成最终报告。
-*   **`benchmark/reports/`**: 存放原始 JSON 日志和单项分析报告的目录。
-
-#### **使用步骤**
-
-1.  **编辑配置 (`benchmark/config.json`)**:
-    ```json
-    {
-      "global_settings": {
-        "task": "ti2v-5B",
-        "ckpt_dir": "...",
-        "prompt": "..."
-      },
-      "test_cases": [
-        {
-          "name": "01_Speed_Preview",
-          "args": { "size": "1280*704", "offload_model": true, "sample_steps": 10 }
-        },
-        {
-          "name": "02_Performance_Mode",
-          "args": { "size": "1280*704", "offload_model": false, "sample_steps": 10 }
-        }
-      ]
-    }
-    ```
-
-2.  **运行测试**:
-    ```bash
-    python3 benchmark/run.py
-    ```
-
-3.  **查看报告**:
-    脚本运行结束后，会在根目录生成 **`benchmark_report.md`**。该报告包含：
-    *   **Benchmark Summary**: 汇总表格，对比不同用例的耗时、显存峰值、SM 活跃度和计算负载。
-    *   **Detailed Breakdown**: 每个测试用例的详细分阶段性能分析（包含各阶段的显存变化和算力利用率）。
-
-## 结果分析方法
-1. **性能对比**: 绘制耗时柱状图。
-2. **算力效率**: 计算 (实际耗时 / 理论算力) 比率。
-3. **性价比测算**: `性价比得分 = (1 / 生成耗时) / 显卡价格`。
+> **详细分析报告**: 请参阅 [benchmark_report.md](./benchmark_report.md) 获取各阶段（编码、推理、解码）的详细耗时与算力分析。

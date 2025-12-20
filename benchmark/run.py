@@ -113,37 +113,33 @@ def run_benchmark(config_path="benchmark/config.json"):
         except Exception as e:
             print(f"   ❌ Error: {e}")
 
-    # 4. Generate Summary Report
+    # 4. Generate Unified Report
     print("\n" + "="*80)
     print("📊 BENCHMARK SUMMARY")
     print("="*80)
     
-    # Markdown Table
+    # Console Output
     header = f"| {'Case':<22} | {'Res':<10} | {'Offload':<7} | {'Time(s)':>8} | {'s/step':>6} | {'Mem(GB)':>7} | {'SM(%)':>5} | {'Load':>6} |"
     print(header)
     print("|" + "-"*24 + "|" + "-"*12 + "|" + "-"*9 + "|" + "-"*10 + "|" + "-"*8 + "|" + "-"*9 + "|" + "-"*7 + "|" + "-"*8 + "|")
     
-    summary_md = "# Wan2.2 Benchmark Report\n\n" + header + "\n" + "|" + "-"*24 + "|" + "-"*12 + "|" + "-"*9 + "|" + "-"*10 + "|" + "-"*8 + "|" + "-"*9 + "|" + "-"*7 + "|" + "-"*8 + "|" + "\n"
-    
     for r in results:
         line = f"| {r['Case']:<22} | {r['Res']:<10} | {str(r['Offload']):<7} | {r['Time(s)']:>8.2f} | {r['Speed(s/step)']:>6.2f} | {r['PeakMem(GB)']:>7.2f} | {r['Avg SM(%)']:>5.1f} | {r['CompLoad']:>6.0f} |"
         print(line)
-        summary_md += line + "\n"
-        
-    with open("benchmark_summary.md", "w") as f:
-        f.write(summary_md)
-    print("\n✅ Summary saved to benchmark_summary.md")
 
-    # 5. Generate Detailed Analysis
-    print("\nGenerating detailed analysis...")
+    print("\nGenerating unified benchmark report...")
     try:
-        from benchmark.report_analysis import analyze_reports
-        analyze_reports()
-    except ImportError:
-        # Fallback if running from a different cwd or module path issues
-        subprocess.run([sys.executable, "benchmark/report_analysis.py"])
+        # Import directly assuming same directory structure or add to path
+        sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+        import report_analysis
+        report_analysis.analyze_reports(summary_data=results)
+        
+        # Cleanup old summary file if it exists
+        if os.path.exists("benchmark_summary.md"):
+            os.remove("benchmark_summary.md")
+            
     except Exception as e:
-        print(f"Failed to generate detailed analysis: {e}")
+        print(f"Failed to generate report: {e}")
 
 if __name__ == "__main__":
     run_benchmark()
