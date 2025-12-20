@@ -410,6 +410,7 @@ class WanS2V:
         seed=-1,
         offload_model=True,
         init_first_frame=False,
+        monitor=None,
     ):
         r"""
         Generates video frames from input image and text prompt using diffusion process.
@@ -448,6 +449,8 @@ class WanS2V:
                 If True, offloads models to CPU during generation to save VRAM
             init_first_frame (`bool`, *optional*, defaults to False):
                 Whether to use the reference image as the first frame (i.e., standard image-to-video generation)
+            monitor (PerformanceMonitor, optional):
+                Monitor to track performance metrics.
 
         Returns:
             torch.Tensor:
@@ -457,6 +460,9 @@ class WanS2V:
                 - H: Frame height (from max_area)
                 - W: Frame width from max_area)
         """
+        if monitor:
+            monitor.start_stage("S2V_Preprocess")
+
         # preprocess
         size = self.get_gen_size(
             size=None,
@@ -481,13 +487,27 @@ class WanS2V:
                 dtype=self.param_dtype,
                 device=self.device)
 
+        if monitor:
+            monitor.end_stage()
+
         # extract audio emb
         if enable_tts is True:
+            if monitor:
+                monitor.start_stage("Text_to_Speech")
             audio_path = self.tts(tts_prompt_audio, tts_prompt_text, tts_text)
+            if monitor:
+                monitor.end_stage()
+
+        if monitor:
+            monitor.start_stage("Audio_Encoding")
         audio_emb, nr = self.encode_audio(audio_path, infer_frames=infer_frames)
         if num_repeat is None or num_repeat > nr:
             num_repeat = nr
+        if monitor:
+            monitor.end_stage()
 
+        if monitor:
+            monitor.start_stage("VAE_Encoding")
         lat_motion_frames = (self.motion_frames + 3) // 4
         model_pic = crop_opreat(resize_opreat(Image.fromarray(ref_image)))
 
@@ -512,6 +532,8 @@ class WanS2V:
             num_repeat=num_repeat,
             infer_frames=infer_frames,
             size=size)
+        if monitor:
+            monitor.end_stage()
 
         seed = seed if seed >= 0 else random.randint(0, sys.maxsize)
 
@@ -519,6 +541,8 @@ class WanS2V:
             n_prompt = self.sample_neg_prompt
 
         # preprocess
+        if monitor:
+            monitor.start_stage("T5_Encoding")
         if not self.t5_cpu:
             self.text_encoder.model.to(self.device)
             context = self.text_encoder([input_prompt], self.device)
@@ -530,6 +554,8 @@ class WanS2V:
             context_null = self.text_encoder([n_prompt], torch.device('cpu'))
             context = [t.to(self.device) for t in context]
             context_null = [t.to(self.device) for t in context_null]
+        if monitor:
+            monitor.end_stage()
 
         out = []
         # evaluation mode
@@ -615,6 +641,8 @@ class WanS2V:
                     torch.cuda.empty_cache()
 
                 for i, t in enumerate(tqdm(timesteps)):
+                    if monitor:
+                        monitor.start_stage(f"Step_{i}_Inference")
                     latent_model_input = latents[0:1]
                     timestep = [t]
 
@@ -640,6 +668,8 @@ class WanS2V:
                         return_dict=False,
                         generator=seed_g)[0]
                     latents[0] = temp_x0.squeeze(0)
+                    if monitor:
+                        monitor.end_stage()
 
                 if offload_model:
                     self.noise_model.cpu()
@@ -650,7 +680,11 @@ class WanS2V:
                     decode_latents = torch.cat([motion_latents, latents], dim=2)
                 else:
                     decode_latents = torch.cat([ref_latents, latents], dim=2)
+                if monitor:
+                    monitor.start_stage("VAE_Decoding")
                 image = torch.stack(self.vae.decode(decode_latents))
+                if monitor:
+                    monitor.end_stage()
                 image = image[:, :, -(infer_frames):]
                 if (drop_first_motion and r == 0):
                     image = image[:, :, 3:]

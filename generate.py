@@ -19,6 +19,7 @@ from wan.configs import MAX_AREA_CONFIGS, SIZE_CONFIGS, SUPPORTED_SIZES, WAN_CON
 from wan.distributed.util import init_distributed_group
 from wan.utils.prompt_extend import DashScopePromptExpander, QwenPromptExpander
 from wan.utils.utils import merge_video_audio, save_video, str2bool
+from wan.utils.monitor import PerformanceMonitor
 
 
 EXAMPLE_PROMPT = {
@@ -221,6 +222,11 @@ def _parse_args():
         action="store_true",
         default=False,
         help="Whether to convert model paramerters dtype.")
+    parser.add_argument(
+        "--report_file",
+        type=str,
+        default="performance_report.json",
+        help="Path to save the performance report.")
 
     # animate
     parser.add_argument(
@@ -319,6 +325,9 @@ def generate(args):
     device = local_rank
     _init_logging(rank)
 
+    monitor = PerformanceMonitor()
+    monitor.start_stage("Total_Execution")
+
     if args.offload_model is None:
         args.offload_model = False if world_size > 1 else True
         logging.info(
@@ -402,17 +411,18 @@ def generate(args):
 
     if "t2v" in args.task:
         logging.info("Creating WanT2V pipeline.")
-        wan_t2v = wan.WanT2V(
-            config=cfg,
-            checkpoint_dir=args.ckpt_dir,
-            device_id=device,
-            rank=rank,
-            t5_fsdp=args.t5_fsdp,
-            dit_fsdp=args.dit_fsdp,
-            use_sp=(args.ulysses_size > 1),
-            t5_cpu=args.t5_cpu,
-            convert_model_dtype=args.convert_model_dtype,
-        )
+        with monitor.trace("Model_Initialization"):
+            wan_t2v = wan.WanT2V(
+                config=cfg,
+                checkpoint_dir=args.ckpt_dir,
+                device_id=device,
+                rank=rank,
+                t5_fsdp=args.t5_fsdp,
+                dit_fsdp=args.dit_fsdp,
+                use_sp=(args.ulysses_size > 1),
+                t5_cpu=args.t5_cpu,
+                convert_model_dtype=args.convert_model_dtype,
+            )
 
         logging.info(f"Generating video ...")
         video = wan_t2v.generate(
@@ -424,20 +434,22 @@ def generate(args):
             sampling_steps=args.sample_steps,
             guide_scale=args.sample_guide_scale,
             seed=args.base_seed,
-            offload_model=args.offload_model)
+            offload_model=args.offload_model,
+            monitor=monitor)
     elif "ti2v" in args.task:
         logging.info("Creating WanTI2V pipeline.")
-        wan_ti2v = wan.WanTI2V(
-            config=cfg,
-            checkpoint_dir=args.ckpt_dir,
-            device_id=device,
-            rank=rank,
-            t5_fsdp=args.t5_fsdp,
-            dit_fsdp=args.dit_fsdp,
-            use_sp=(args.ulysses_size > 1),
-            t5_cpu=args.t5_cpu,
-            convert_model_dtype=args.convert_model_dtype,
-        )
+        with monitor.trace("Model_Initialization"):
+            wan_ti2v = wan.WanTI2V(
+                config=cfg,
+                checkpoint_dir=args.ckpt_dir,
+                device_id=device,
+                rank=rank,
+                t5_fsdp=args.t5_fsdp,
+                dit_fsdp=args.dit_fsdp,
+                use_sp=(args.ulysses_size > 1),
+                t5_cpu=args.t5_cpu,
+                convert_model_dtype=args.convert_model_dtype,
+            )
 
         logging.info(f"Generating video ...")
         video = wan_ti2v.generate(
@@ -451,7 +463,8 @@ def generate(args):
             sampling_steps=args.sample_steps,
             guide_scale=args.sample_guide_scale,
             seed=args.base_seed,
-            offload_model=args.offload_model)
+            offload_model=args.offload_model,
+            monitor=monitor)
     elif "animate" in args.task:
         logging.info("Creating Wan-Animate pipeline.")
         wan_animate = wan.WanAnimate(
@@ -478,7 +491,8 @@ def generate(args):
             sampling_steps=args.sample_steps,
             guide_scale=args.sample_guide_scale,
             seed=args.base_seed,
-            offload_model=args.offload_model)
+            offload_model=args.offload_model,
+            monitor=monitor)
     elif "s2v" in args.task:
         logging.info("Creating WanS2V pipeline.")
         wan_s2v = wan.WanS2V(
@@ -512,6 +526,7 @@ def generate(args):
             seed=args.base_seed,
             offload_model=args.offload_model,
             init_first_frame=args.start_from_ref,
+            monitor=monitor,
         )
     else:
         logging.info("Creating WanI2V pipeline.")
@@ -537,7 +552,8 @@ def generate(args):
             sampling_steps=args.sample_steps,
             guide_scale=args.sample_guide_scale,
             seed=args.base_seed,
-            offload_model=args.offload_model)
+            offload_model=args.offload_model,
+            monitor=monitor)
 
     if rank == 0:
         if args.save_file is None:
@@ -566,6 +582,10 @@ def generate(args):
     if dist.is_initialized():
         dist.barrier()
         dist.destroy_process_group()
+
+    monitor.end_stage() # End Total_Execution
+    if rank == 0:
+        monitor.save_report(args.report_file, args)
 
     logging.info("Finished.")
 

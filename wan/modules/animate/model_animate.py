@@ -27,11 +27,12 @@ from ..model import (
     WanRMSNorm,
     WanModel,
     WanSelfAttention,
-    flash_attention,
     rope_params,
     sinusoidal_embedding_1d,
     rope_apply
 )
+
+from ..attention import attention
 
 from .face_blocks import FaceEncoder, FaceAdapter
 from .motion_encoder import Generator
@@ -72,7 +73,7 @@ class WanAnimateSelfAttention(WanSelfAttention):
 
         q, k, v = qkv_fn(x)
 
-        x = flash_attention(
+        x = attention(
             q=rope_apply(q, grid_sizes, freqs),
             k=rope_apply(k, grid_sizes, freqs),
             v=v,

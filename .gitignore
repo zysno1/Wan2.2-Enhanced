@@ -5,3 +5,10 @@ tmp_examples*
 new_checkpoint*
 batch_test*
 nohup*
+venv/
+Wan2.2-T2V-A14B/
+Wan2.2-TI2V-5B/
+benchmark/reports/
+benchmark_report.md
+performance_report.json
+*.pyc

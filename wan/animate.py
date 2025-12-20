@@ -308,6 +308,7 @@ class WanAnimate:
         n_prompt="",
         seed=-1,
         offload_model=True,
+        monitor=None,
     ):
         r"""
         Generates video frames from input image using diffusion process.
@@ -339,6 +340,8 @@ class WanAnimate:
                 Random seed for noise generation. If -1, use random seed
             offload_model (`bool`, *optional*, defaults to True):
                 If True, offloads models to CPU during generation to save VRAM
+            monitor (PerformanceMonitor, *optional*):
+                Performance monitor instance.
 
         Returns:
             torch.Tensor:
@@ -349,6 +352,9 @@ class WanAnimate:
                 - W: Frame width 
         """
         assert refert_num == 1 or refert_num == 5, "refert_num should be 1 or 5."
+
+        if monitor:
+            monitor.start_stage("Animate_Preprocess")
 
         seed_g = torch.Generator(device=self.device)
         seed_g.manual_seed(seed)
@@ -376,6 +382,8 @@ class WanAnimate:
             context_null = self.text_encoder([n_prompt], torch.device('cpu'))
             context = [t.to(self.device) for t in context]
             context_null = [t.to(self.device) for t in context_null]
+        if monitor:
+            monitor.end_stage()
 
         real_frame_len = len(cond_images)
         target_len = self.get_valid_len(real_frame_len, clip_len, overlap=refert_num)
@@ -634,7 +642,11 @@ class WanAnimate:
                     x0 = latents
 
                 x0 = [x.to(dtype=torch.float32) for x in x0]
+                if monitor:
+                    monitor.start_stage("VAE_Decoding")
                 out_frames = torch.stack(self.vae.decode([x0[0][:, 1:]]))
+                if monitor:
+                    monitor.end_stage()
                 
                 if start != 0:
                     out_frames = out_frames[:, :, refert_num:]

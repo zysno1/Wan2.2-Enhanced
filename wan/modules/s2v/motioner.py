@@ -10,7 +10,7 @@ from diffusers.loaders import FromOriginalModelMixin, PeftAdapterMixin
 from diffusers.utils import BaseOutput, is_torch_version
 from einops import rearrange, repeat
 
-from ..model import flash_attention
+from ..attention import attention
 from .s2v_utils import rope_precompute
 
 
@@ -172,7 +172,7 @@ class SelfAttention(nn.Module):
 
         q, k, v = qkv_fn(x)
 
-        x = flash_attention(
+        xout = attention(
             q=rope_apply(q, grid_sizes, freqs),
             k=rope_apply(k, grid_sizes, freqs),
             v=v,
@@ -224,11 +224,10 @@ class SwinSelfAttention(SelfAttention):
 
         # q: b (t h w) n d
         # k: b (t h w) n d
-        out = flash_attention(
+        out = attention(
             q=q,
             k=k,
             v=v,
-            # k_lens=torch.tensor([k.shape[1]] * k.shape[0], device=x.device, dtype=torch.long),
             window_size=self.window_size)
         out = torch.cat([out, ref_v[:1]], axis=0)
         out = rearrange(out, '(b t) (h w) n d -> b (t h w) n d', t=T, h=H, w=W)
@@ -308,7 +307,7 @@ class CasualSelfAttention(SelfAttention):
         # k: b (t h w) n d
         outs = []
         for i in range(q.shape[0]):
-            out = flash_attention(
+            out = attention(
                 q=q[i:i + 1],
                 k=k[i:i + 1],
                 v=v[i:i + 1],

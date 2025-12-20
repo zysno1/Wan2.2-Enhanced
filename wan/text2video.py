@@ -210,7 +210,8 @@ class WanT2V:
                  guide_scale=5.0,
                  n_prompt="",
                  seed=-1,
-                 offload_model=True):
+                 offload_model=True,
+                 monitor=None):
         r"""
         Generates video frames from text prompt using diffusion process.
 
@@ -237,16 +238,12 @@ class WanT2V:
                 Random seed for noise generation. If -1, use random seed.
             offload_model (`bool`, *optional*, defaults to True):
                 If True, offloads models to CPU during generation to save VRAM
-
-        Returns:
-            torch.Tensor:
-                Generated video frames tensor. Dimensions: (C, N H, W) where:
-                - C: Color channels (3 for RGB)
-                - N: Number of frames (81)
-                - H: Frame height (from size)
-                - W: Frame width from size)
+            monitor (PerformanceMonitor, *optional*):
+                Performance monitor instance.
         """
         # preprocess
+        if monitor:
+            monitor.start_stage("T2V_Preprocess")
         guide_scale = (guide_scale, guide_scale) if isinstance(
             guide_scale, float) else guide_scale
         F = frame_num
@@ -263,7 +260,11 @@ class WanT2V:
         seed = seed if seed >= 0 else random.randint(0, sys.maxsize)
         seed_g = torch.Generator(device=self.device)
         seed_g.manual_seed(seed)
+        if monitor:
+            monitor.end_stage()
 
+        if monitor:
+            monitor.start_stage("T5_Encoding")
         if not self.t5_cpu:
             self.text_encoder.model.to(self.device)
             context = self.text_encoder([input_prompt], self.device)
@@ -275,6 +276,8 @@ class WanT2V:
             context_null = self.text_encoder([n_prompt], torch.device('cpu'))
             context = [t.to(self.device) for t in context]
             context_null = [t.to(self.device) for t in context_null]
+        if monitor:
+            monitor.end_stage()
 
         noise = [
             torch.randn(
@@ -332,7 +335,9 @@ class WanT2V:
             arg_c = {'context': context, 'seq_len': seq_len}
             arg_null = {'context': context_null, 'seq_len': seq_len}
 
-            for _, t in enumerate(tqdm(timesteps)):
+            for idx, t in enumerate(tqdm(timesteps)):
+                if monitor:
+                    monitor.start_stage(f"Step_{idx}_Loading")
                 latent_model_input = latents
                 timestep = [t]
 
@@ -342,7 +347,11 @@ class WanT2V:
                     t, boundary, offload_model)
                 sample_guide_scale = guide_scale[1] if t.item(
                 ) >= boundary else guide_scale[0]
+                if monitor:
+                    monitor.end_stage()
 
+                if monitor:
+                    monitor.start_stage(f"Step_{idx}_Inference")
                 noise_pred_cond = model(
                     latent_model_input, t=timestep, **arg_c)[0]
                 noise_pred_uncond = model(
@@ -358,16 +367,24 @@ class WanT2V:
                     return_dict=False,
                     generator=seed_g)[0]
                 latents = [temp_x0.squeeze(0)]
+                if monitor:
+                    monitor.end_stage()
 
             x0 = latents
             if offload_model:
                 self.low_noise_model.cpu()
                 self.high_noise_model.cpu()
                 torch.cuda.empty_cache()
+            
             if self.rank == 0:
+                if monitor:
+                    monitor.start_stage("VAE_Decoding")
                 videos = self.vae.decode(x0)
+                if monitor:
+                    monitor.end_stage()
 
         del noise, latents
+
         del sample_scheduler
         if offload_model:
             gc.collect()

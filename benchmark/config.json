@@ -1,0 +1,43 @@
+{
+  "global_settings": {
+    "ckpt_dir": "/workspace/Wan2.2-Enhanced/Wan2.2-TI2V-5B",
+    "task": "ti2v-5B",
+    "prompt": "Two anthropomorphic cats in comfy boxing gear and bright gloves fight intensely on a spotlighted stage.",
+    "base_seed": 42
+  },
+  "test_cases": [
+    {
+      "name": "01_Speed_Preview_480p",
+      "description": "Low resolution, few steps for rapid prompt iteration",
+      "args": {
+        "size": "1280*704",
+        "frame_num": 161,
+        "sample_steps": 5,
+        "offload_model": true,
+        "t5_cpu": true
+      }
+    },
+    {
+      "name": "02_Efficiency_Mode_720p",
+      "description": "Standard resolution with offloading to save VRAM",
+      "args": {
+        "size": "1280*704",
+        "frame_num": 161,
+        "sample_steps": 10,
+        "offload_model": true,
+        "t5_cpu": true
+      }
+    },
+    {
+      "name": "03_Performance_Mode_720p",
+      "description": "Standard resolution WITHOUT offloading (High VRAM usage, lower latency)",
+      "args": {
+        "size": "1280*704",
+        "frame_num": 161,
+        "sample_steps": 10,
+        "offload_model": false,
+        "t5_cpu": true
+      }
+    }
+  ]
+}

@@ -214,7 +214,8 @@ class WanI2V:
                  guide_scale=5.0,
                  n_prompt="",
                  seed=-1,
-                 offload_model=True):
+                 offload_model=True,
+                 monitor=None):
         r"""
         Generates video frames from input image and text prompt using diffusion process.
 
@@ -244,6 +245,8 @@ class WanI2V:
                 Random seed for noise generation. If -1, use random seed
             offload_model (`bool`, *optional*, defaults to True):
                 If True, offloads models to CPU during generation to save VRAM
+            monitor (PerformanceMonitor, *optional*):
+                Performance monitor instance.
 
         Returns:
             torch.Tensor:
@@ -254,6 +257,8 @@ class WanI2V:
                 - W: Frame width from max_area)
         """
         # preprocess
+        if monitor:
+            monitor.start_stage("I2V_Preprocess")
         guide_scale = (guide_scale, guide_scale) if isinstance(
             guide_scale, float) else guide_scale
         img = TF.to_tensor(img).sub_(0.5).div_(0.5).to(self.device)
@@ -297,8 +302,12 @@ class WanI2V:
 
         if n_prompt == "":
             n_prompt = self.sample_neg_prompt
+        if monitor:
+            monitor.end_stage()
 
         # preprocess
+        if monitor:
+            monitor.start_stage("T5_Encoding")
         if not self.t5_cpu:
             self.text_encoder.model.to(self.device)
             context = self.text_encoder([input_prompt], self.device)
@@ -310,7 +319,11 @@ class WanI2V:
             context_null = self.text_encoder([n_prompt], torch.device('cpu'))
             context = [t.to(self.device) for t in context]
             context_null = [t.to(self.device) for t in context_null]
+        if monitor:
+            monitor.end_stage()
 
+        if monitor:
+            monitor.start_stage("VAE_Encoding")
         y = self.vae.encode([
             torch.concat([
                 torch.nn.functional.interpolate(
@@ -321,6 +334,8 @@ class WanI2V:
                          dim=1).to(self.device)
         ])[0]
         y = torch.concat([msk, y])
+        if monitor:
+            monitor.end_stage()
 
         @contextmanager
         def noop_no_sync():
@@ -379,7 +394,9 @@ class WanI2V:
             if offload_model:
                 torch.cuda.empty_cache()
 
-            for _, t in enumerate(tqdm(timesteps)):
+            for idx, t in enumerate(tqdm(timesteps)):
+                if monitor:
+                    monitor.start_stage(f"Step_{idx}_Loading")
                 latent_model_input = [latent.to(self.device)]
                 timestep = [t]
 
@@ -389,7 +406,11 @@ class WanI2V:
                     t, boundary, offload_model)
                 sample_guide_scale = guide_scale[1] if t.item(
                 ) >= boundary else guide_scale[0]
+                if monitor:
+                    monitor.end_stage()
 
+                if monitor:
+                    monitor.start_stage(f"Step_{idx}_Inference")
                 noise_pred_cond = model(
                     latent_model_input, t=timestep, **arg_c)[0]
                 if offload_model:
@@ -411,6 +432,8 @@ class WanI2V:
 
                 x0 = [latent]
                 del latent_model_input, timestep
+                if monitor:
+                    monitor.end_stage()
 
             if offload_model:
                 self.low_noise_model.cpu()
@@ -418,9 +441,14 @@ class WanI2V:
                 torch.cuda.empty_cache()
 
             if self.rank == 0:
+                if monitor:
+                    monitor.start_stage("VAE_Decoding")
                 videos = self.vae.decode(x0)
+                if monitor:
+                    monitor.end_stage()
 
         del noise, latent, x0
+
         del sample_scheduler
         if offload_model:
             gc.collect()
