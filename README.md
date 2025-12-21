@@ -1,16 +1,19 @@
 # Wan2.2-Enhanced Performance Benchmark
 
 ## 1. 项目目标
-本项目旨在评估并对比 **Wan2.2-5B** 模型在 **NVIDIA RTX 4090** 和 **NVIDIA RTX PRO 6000 Blackwell** 两种不同 GPU 架构上的视频生成性能。
+本项目旨在评估并对比 **Wan2.2-5B** 模型在 **NVIDIA L40S** 和 **NVIDIA RTX PRO 6000 Blackwell** 两种不同 GPU 架构上的视频生成性能。
 重点记录详细的 **显存消耗 (Memory Usage)** 和 **计算资源消耗 (Compute Load/SM Activity)**，为硬件选型和生产环境部署提供参考。
 
 ## 2. 环境参数
-- **Hardware Group A**: NVIDIA RTX 4090 (24GB VRAM) - 代表消费级旗舰。
+- **Hardware Group A**: NVIDIA L40S (48GB VRAM) - 代表数据中心推理卡。
 - **Hardware Group B**: NVIDIA RTX PRO 6000 Blackwell (96GB VRAM) - 代表新一代高性能工作站/服务器显卡。
 - **Software Environment**:
   - OS: Linux
   - Codebase: Wan2.2-Enhanced
   - Model: Wan2.2-TI2V-5B (50亿参数)
+  - PyTorch: 2.9.1+cu128
+  - CUDA: 12.8
+  - Flash Attention: 2.8.3
 
 ## 3. 测试场景
 测试对象为 **Wan2.2-TI2V-5B** (图生视频任务)，覆盖以下典型应用场景：
