@@ -2,6 +2,62 @@ import json
 import os
 import glob
 import sys
+import re
+import argparse
+
+def analyze_existing_report(file_path):
+    """
+    Analyzes an existing markdown benchmark report.
+    Parses the tables and summary sections to provide insights.
+    """
+    if not os.path.exists(file_path):
+        print(f"Error: File {file_path} not found.")
+        return
+
+    with open(file_path, 'r') as f:
+        content = f.read()
+
+    print(f"Analyzing report: {file_path}\n")
+
+    # 1. Parse Performance Summary Table
+    summary_match = re.search(r"## Performance Summary.*?\n(\|.*?)(\n\n|\n#)", content, re.DOTALL)
+    if summary_match:
+        print("=== Performance Summary Found ===")
+        table_text = summary_match.group(1).strip()
+        lines = table_text.split('\n')
+        # Skip header and separator
+        data_lines = [l for l in lines if l.strip().startswith('|') and '---' not in l and 'Case' not in l]
+        
+        for line in data_lines:
+            cols = [c.strip() for c in line.split('|') if c.strip()]
+            if len(cols) >= 5:
+                case, res, l40s_time, rtx_time, speedup = cols[:5]
+                print(f"Case: {case}")
+                print(f"  - Resolution: {res}")
+                print(f"  - L40S Time: {l40s_time}s")
+                print(f"  - RTX 6000 Time: {rtx_time}s")
+                print(f"  - Speedup: {speedup}")
+        print("")
+    else:
+        print("No 'Performance Summary' table found.\n")
+
+    # 2. Extract GPU Peak Memory for each section
+    print("=== GPU Memory Usage Analysis ===")
+    # Regex to find Case sections and their Peak GPU Memory
+    # Matches "## Case: <name>" followed eventually by "- **Peak GPU Memory**: <val> GB"
+    case_matches = list(re.finditer(r"## Case: (.*?)\n.*?Peak GPU Memory\*\*: ([\d\.]+) GB", content, re.DOTALL))
+    
+    if case_matches:
+        for match in case_matches:
+            case_name = match.group(1).strip()
+            mem_gb = float(match.group(2))
+            status = "SAFE" if mem_gb < 40 else "HIGH/WARNING"
+            print(f"Case: {case_name:<30} | Memory: {mem_gb:>6.2f} GB | Status: {status}")
+    else:
+        # Try alternate format (from detailed breakdown tables)
+        pass # Keep it simple for now
+    
+    print("\nAnalysis Complete.")
 
 def analyze_reports(report_dir="benchmark/reports", output_file="benchmark_report.md", summary_data=None):
     json_files = sorted(glob.glob(os.path.join(report_dir, "*.json")))
@@ -181,4 +237,14 @@ def analyze_reports(report_dir="benchmark/reports", output_file="benchmark_repor
     # Optional: Remove the separate files if desired, but keeping them is fine too.
 
 if __name__ == "__main__":
-    analyze_reports()
+    parser = argparse.ArgumentParser(description="Analyze benchmark reports.")
+    parser.add_argument("--analyze-existing", type=str, help="Path to an existing markdown report to analyze.")
+    parser.add_argument("--report-dir", type=str, default="benchmark/reports", help="Directory containing JSON reports.")
+    parser.add_argument("--output", type=str, default="benchmark_report.md", help="Output markdown file path.")
+    
+    args = parser.parse_args()
+    
+    if args.analyze_existing:
+        analyze_existing_report(args.analyze_existing)
+    else:
+        analyze_reports(report_dir=args.report_dir, output_file=args.output)

@@ -12,3 +12,6 @@ performance_report.json
 *.pyc
 .venv/
 .env
+build/
+*.egg-info/
+*.deb
