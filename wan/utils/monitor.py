@@ -6,7 +6,7 @@ import threading
 import subprocess
 import sys
 import os
-import os
+import psutil
 
 # Add DCGM bindings to path
 dcgm_path = '/usr/local/dcgm/bindings/python3'
@@ -38,6 +38,8 @@ class StageMetrics:
     end_memory: int = 0
     gpu_utilization: float = 0.0
     sm_activity: float = 0.0  # New field for SM Activity
+    cpu_utilization: float = 0.0 # New field for CPU Usage
+    system_memory_peak: int = 0 # New field for System RAM Peak (bytes)
     
     @property
     def duration(self):
@@ -72,6 +74,8 @@ class PerformanceMonitor:
         # GPU Sampling
         self.gpu_samples = [] # (timestamp, util_percent)
         self.sm_samples = [] # (timestamp, sm_percent)
+        self.cpu_samples = [] # (timestamp, cpu_percent)
+        self.ram_samples = [] # (timestamp, used_bytes)
         self.running = True
         self.gpu_handle = None
         
@@ -199,12 +203,21 @@ class PerformanceMonitor:
 
     def _monitor_loop(self):
         while self.running:
+            # GPU Utilization
             if self.gpu_handle:
                 try:
                     util = pynvml.nvmlDeviceGetUtilizationRates(self.gpu_handle)
                     self.gpu_samples.append((time.time(), util.gpu))
                 except:
                     pass
+            
+            # CPU & RAM
+            try:
+                self.cpu_samples.append((time.time(), psutil.cpu_percent()))
+                self.ram_samples.append((time.time(), psutil.virtual_memory().used))
+            except:
+                pass
+
             time.sleep(0.05) # 50ms sampling
 
     def __del__(self):
@@ -348,6 +361,20 @@ class PerformanceMonitor:
                     # Or just 0.
                     stage.sm_activity = 0.0
 
+            # Calculate CPU Utilization
+            if self.cpu_samples:
+                cpu_samples_stage = [util for t, util in self.cpu_samples
+                                    if t >= stage.start_time and t <= stage.end_time]
+                if cpu_samples_stage:
+                    stage.cpu_utilization = sum(cpu_samples_stage) / len(cpu_samples_stage)
+            
+            # Calculate System RAM Peak
+            if self.ram_samples:
+                ram_samples_stage = [used for t, used in self.ram_samples
+                                    if t >= stage.start_time and t <= stage.end_time]
+                if ram_samples_stage:
+                    stage.system_memory_peak = max(ram_samples_stage)
+
             # Capture the peak observed during *this* stage execution (since its start)
             current_peak = self._get_max_memory_allocated()
             stage.peak_memory = max(stage.peak_memory, current_peak)
@@ -405,6 +432,8 @@ class PerformanceMonitor:
                 "activation_memory_estimate_mb": round(stage.activation_memory / (1024**2), 2),
                 "gpu_utilization": round(stage.gpu_utilization, 2),
                 "sm_activity": round(stage.sm_activity, 2),
+                "cpu_utilization": round(stage.cpu_utilization, 2),
+                "system_memory_peak_gb": round(stage.system_memory_peak / (1024**3), 2),
                 "compute_efficiency": round(stage.compute_efficiency, 2),
                 "compute_load": round(stage.compute_load, 2)
             }

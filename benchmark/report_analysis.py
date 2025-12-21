@@ -95,13 +95,13 @@ def analyze_reports(report_dir="benchmark/reports", output_file="benchmark_repor
         # Section Header
         unified_content += f"## Case: {case_name}\n\n"
         unified_content += f"- **Total Duration**: {total_duration:.2f} s\n"
-        unified_content += f"- **Peak Memory**: {peak_mem_gb:.2f} GB\n"
+        unified_content += f"- **Peak GPU Memory**: {peak_mem_gb:.2f} GB\n"
         unified_content += f"- **Total Compute Load**: {total_load:.0f}\n\n"
         
         # Detailed Table
         unified_content += "### Stage Breakdown\n\n"
-        header = "| Stage | Time (s) | Peak Mem (GB) | SM Act (%) | Comp Load |\n"
-        separator = "| :--- | :--- | :--- | :--- | :--- |\n"
+        header = "| Stage | Time (s) | GPU Mem (GB) | CPU (%) | Sys Mem (GB) | SM Act (%) | Comp Load |\n"
+        separator = "| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n"
         unified_content += header + separator
         
         inference_steps = []
@@ -112,11 +112,13 @@ def analyze_reports(report_dir="benchmark/reports", output_file="benchmark_repor
             mem_mb = stage.get("peak_memory_mb", 0)
             sm = stage.get("sm_activity", 0)
             load = stage.get("compute_load", 0)
+            cpu = stage.get("cpu_utilization", 0)
+            sys_mem_gb = stage.get("system_memory_peak_gb", 0)
             
             # Formatting
             mem_gb = mem_mb / 1024
             
-            row = f"| {name} | {duration:.2f} | {mem_gb:.2f} | {sm:.1f} | {load:.0f} |\n"
+            row = f"| {name} | {duration:.2f} | {mem_gb:.2f} | {cpu:.1f} | {sys_mem_gb:.2f} | {sm:.1f} | {load:.0f} |\n"
             unified_content += row
             
             if "Inference" in name:
@@ -124,17 +126,50 @@ def analyze_reports(report_dir="benchmark/reports", output_file="benchmark_repor
 
         unified_content += "\n"
         
-        # Inference Analysis (if steps exist)
+        # Inference Statistics
         if inference_steps:
             avg_step_time = sum(s['duration_sec'] for s in inference_steps) / len(inference_steps)
             avg_step_sm = sum(s['sm_activity'] for s in inference_steps) / len(inference_steps)
+            avg_step_cpu = sum(s.get('cpu_utilization', 0) for s in inference_steps) / len(inference_steps)
             total_step_load = sum(s['compute_load'] for s in inference_steps)
             
             unified_content += "### Inference Statistics\n\n"
             unified_content += f"- **Avg Time per Step**: {avg_step_time:.2f} s\n"
             unified_content += f"- **Avg SM Activity**: {avg_step_sm:.1f} %\n"
+            unified_content += f"- **Avg CPU Utilization**: {avg_step_cpu:.1f} %\n"
             unified_content += f"- **Total Inference Load**: {total_step_load:.0f}\n\n"
             
+        # Automated Analysis
+        unified_content += "### Performance Analysis\n\n"
+        
+        # 1. Bottleneck Identification
+        bottlenecks = []
+        if total_duration > 0:
+            avg_sm_total = sum(s.get('sm_activity', 0) * s.get('duration_sec', 0) for s in stages) / total_duration
+            if avg_sm_total < 80:
+                bottlenecks.append(f"Low overall GPU utilization ({avg_sm_total:.1f}%), suggesting potential CPU bottlenecks or data loading overhead.")
+        
+        # Check specific stages
+        for stage in stages:
+            if "Inference" in stage.get("stage", "") and stage.get("sm_activity", 0) < 90:
+                bottlenecks.append(f"Inference stage '{stage['stage']}' has low SM activity ({stage['sm_activity']}%), check kernel efficiency.")
+        
+        if bottlenecks:
+            unified_content += "**Bottlenecks Detected:**\n"
+            for b in bottlenecks:
+                unified_content += f"- {b}\n"
+            unified_content += "\n"
+        else:
+            unified_content += "No significant bottlenecks detected. GPU utilization is healthy.\n\n"
+            
+        # 2. Resource Usage
+        unified_content += "**Resource Usage Overview:**\n"
+        unified_content += f"- Peak GPU Memory reached {peak_mem_gb:.2f} GB. "
+        if peak_mem_gb > 40:
+             unified_content += "High VRAM usage, close to 48GB limit on L40S.\n"
+        else:
+             unified_content += "VRAM usage is within safe margins.\n"
+             
         unified_content += "---\n\n"
 
     # 3. Write Unified Report

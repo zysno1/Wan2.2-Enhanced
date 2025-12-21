@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 import time
+import torch
 from glob import glob
 
 def run_benchmark(config_path="benchmark/config.json"):
@@ -129,10 +130,21 @@ def run_benchmark(config_path="benchmark/config.json"):
 
     print("\nGenerating unified benchmark report...")
     try:
+        # Determine output filename based on GPU
+        try:
+            gpu_name = torch.cuda.get_device_name(0)
+            # Simplify name: "NVIDIA L40S" -> "L40S", "NVIDIA RTX 6000 Ada Generation" -> "RTX_6000_Ada"
+            gpu_safe_name = gpu_name.replace("NVIDIA ", "").replace(" ", "_")
+            report_filename = f"benchmark_report_{gpu_safe_name}.md"
+        except:
+            report_filename = "benchmark_report.md"
+            
+        print(f"Report file: {report_filename}")
+
         # Import directly assuming same directory structure or add to path
         sys.path.append(os.path.dirname(os.path.abspath(__file__)))
         import report_analysis
-        report_analysis.analyze_reports(summary_data=results)
+        report_analysis.analyze_reports(summary_data=results, output_file=report_filename)
         
         # Cleanup old summary file if it exists
         if os.path.exists("benchmark_summary.md"):
