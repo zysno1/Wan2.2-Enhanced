@@ -3,28 +3,28 @@
         "pytorch_version": "2.9.1+cu128",
         "cuda_version": "12.8",
         "gpu_info": {
-            "name": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
-            "total_memory_gb": 94.98
+            "name": "NVIDIA L40S",
+            "total_memory_gb": 44.52
         }
     },
-    "total_duration": 150.43136167526245,
+    "total_duration": 323.9975037574768,
     "stages": [
         {
             "stage": "Model_Initialization",
-            "duration_sec": 40.536,
+            "duration_sec": 83.9121,
             "start_memory_mb": 0.0,
             "end_memory_mb": 2697.02,
             "peak_memory_mb": 2697.02,
             "memory_delta_mb": 2697.02,
             "activation_memory_estimate_mb": 2697.02,
-            "gpu_utilization": 0.05,
+            "gpu_utilization": 0.12,
             "sm_activity": 0.0,
-            "compute_efficiency": 1.91,
+            "compute_efficiency": 10.26,
             "compute_load": 0.0
         },
         {
             "stage": "TI2V_Preprocess",
-            "duration_sec": 0.0,
+            "duration_sec": 0.0001,
             "start_memory_mb": 2697.02,
             "end_memory_mb": 2697.02,
             "peak_memory_mb": 2697.02,
@@ -37,20 +37,20 @@
         },
         {
             "stage": "T5_Encoding",
-            "duration_sec": 12.6796,
+            "duration_sec": 44.759,
             "start_memory_mb": 2697.02,
             "end_memory_mb": 2698.22,
             "peak_memory_mb": 2698.22,
             "memory_delta_mb": 1.2,
             "activation_memory_estimate_mb": 1.2,
-            "gpu_utilization": 0.23,
+            "gpu_utilization": 0.06,
             "sm_activity": 0.0,
-            "compute_efficiency": 2.96,
+            "compute_efficiency": 2.89,
             "compute_load": 0.0
         },
         {
             "stage": "Step_0_Loading",
-            "duration_sec": 0.0045,
+            "duration_sec": 0.0109,
             "start_memory_mb": 21850.18,
             "end_memory_mb": 21850.31,
             "peak_memory_mb": 21850.45,
@@ -63,20 +63,20 @@
         },
         {
             "stage": "Step_0_Inference",
-            "duration_sec": 6.9779,
+            "duration_sec": 12.7481,
             "start_memory_mb": 21850.31,
             "end_memory_mb": 21992.57,
             "peak_memory_mb": 31862.54,
             "memory_delta_mb": 142.25,
             "activation_memory_estimate_mb": 10012.22,
-            "gpu_utilization": 94.59,
-            "sm_activity": 86.0,
-            "compute_efficiency": 660.04,
-            "compute_load": 600.1
+            "gpu_utilization": 95.51,
+            "sm_activity": 92.62,
+            "compute_efficiency": 1217.58,
+            "compute_load": 1180.67
         },
         {
             "stage": "Step_1_Loading",
-            "duration_sec": 0.0001,
+            "duration_sec": 0.0003,
             "start_memory_mb": 21992.57,
             "end_memory_mb": 21992.57,
             "peak_memory_mb": 21992.71,
@@ -89,20 +89,20 @@
         },
         {
             "stage": "Step_1_Inference",
-            "duration_sec": 6.8452,
+            "duration_sec": 12.499,
             "start_memory_mb": 21992.57,
             "end_memory_mb": 22071.85,
             "peak_memory_mb": 31968.24,
             "memory_delta_mb": 79.28,
             "activation_memory_estimate_mb": 9975.67,
-            "gpu_utilization": 100.0,
+            "gpu_utilization": 99.76,
             "sm_activity": 100.0,
-            "compute_efficiency": 684.52,
-            "compute_load": 684.52
+            "compute_efficiency": 1246.86,
+            "compute_load": 1249.9
         },
         {
             "stage": "Step_2_Loading",
-            "duration_sec": 0.0001,
+            "duration_sec": 0.0002,
             "start_memory_mb": 22071.85,
             "end_memory_mb": 22045.42,
             "peak_memory_mb": 22071.85,
@@ -115,20 +115,20 @@
         },
         {
             "stage": "Step_2_Inference",
-            "duration_sec": 6.8765,
+            "duration_sec": 12.6288,
             "start_memory_mb": 22045.42,
             "end_memory_mb": 22072.44,
             "peak_memory_mb": 32021.09,
             "memory_delta_mb": 27.02,
             "activation_memory_estimate_mb": 9975.67,
-            "gpu_utilization": 99.77,
+            "gpu_utilization": 99.87,
             "sm_activity": 100.0,
-            "compute_efficiency": 686.04,
-            "compute_load": 687.65
+            "compute_efficiency": 1261.21,
+            "compute_load": 1262.88
         },
         {
             "stage": "Step_3_Loading",
-            "duration_sec": 0.0001,
+            "duration_sec": 0.0002,
             "start_memory_mb": 22072.44,
             "end_memory_mb": 22046.01,
             "peak_memory_mb": 22072.44,
@@ -141,20 +141,20 @@
         },
         {
             "stage": "Step_3_Inference",
-            "duration_sec": 6.8467,
+            "duration_sec": 12.621,
             "start_memory_mb": 22046.01,
             "end_memory_mb": 22072.44,
             "peak_memory_mb": 32021.09,
             "memory_delta_mb": 26.43,
             "activation_memory_estimate_mb": 9975.08,
-            "gpu_utilization": 99.94,
+            "gpu_utilization": 99.54,
             "sm_activity": 100.0,
-            "compute_efficiency": 684.27,
-            "compute_load": 684.67
+            "compute_efficiency": 1256.3,
+            "compute_load": 1262.1
         },
         {
             "stage": "Step_4_Loading",
-            "duration_sec": 0.0001,
+            "duration_sec": 0.0004,
             "start_memory_mb": 22072.44,
             "end_memory_mb": 22046.01,
             "peak_memory_mb": 22072.44,
@@ -167,20 +167,20 @@
         },
         {
             "stage": "Step_4_Inference",
-            "duration_sec": 6.8472,
+            "duration_sec": 12.6058,
             "start_memory_mb": 22046.01,
             "end_memory_mb": 22072.44,
             "peak_memory_mb": 32021.09,
             "memory_delta_mb": 26.43,
             "activation_memory_estimate_mb": 9975.08,
-            "gpu_utilization": 99.74,
+            "gpu_utilization": 99.79,
             "sm_activity": 100.0,
-            "compute_efficiency": 682.92,
-            "compute_load": 684.72
+            "compute_efficiency": 1257.88,
+            "compute_load": 1260.58
         },
         {
             "stage": "Step_5_Loading",
-            "duration_sec": 0.0001,
+            "duration_sec": 0.0002,
             "start_memory_mb": 22072.44,
             "end_memory_mb": 22046.01,
             "peak_memory_mb": 22072.44,
@@ -193,20 +193,20 @@
         },
         {
             "stage": "Step_5_Inference",
-            "duration_sec": 6.8476,
+            "duration_sec": 12.6079,
             "start_memory_mb": 22046.01,
             "end_memory_mb": 22071.85,
             "peak_memory_mb": 32021.09,
             "memory_delta_mb": 25.83,
             "activation_memory_estimate_mb": 9975.08,
-            "gpu_utilization": 99.79,
-            "sm_activity": 99.0,
-            "compute_efficiency": 683.35,
-            "compute_load": 677.91
+            "gpu_utilization": 99.87,
+            "sm_activity": 100.0,
+            "compute_efficiency": 1259.14,
+            "compute_load": 1260.79
         },
         {
             "stage": "Step_6_Loading",
-            "duration_sec": 0.0001,
+            "duration_sec": 0.0003,
             "start_memory_mb": 22071.85,
             "end_memory_mb": 22045.42,
             "peak_memory_mb": 22071.85,
@@ -219,20 +219,20 @@
         },
         {
             "stage": "Step_6_Inference",
-            "duration_sec": 6.8503,
+            "duration_sec": 12.6543,
             "start_memory_mb": 22045.42,
             "end_memory_mb": 22072.44,
             "peak_memory_mb": 32021.09,
             "memory_delta_mb": 27.02,
             "activation_memory_estimate_mb": 9975.67,
-            "gpu_utilization": 99.74,
-            "sm_activity": 100.0,
-            "compute_efficiency": 683.22,
-            "compute_load": 685.03
+            "gpu_utilization": 99.89,
+            "sm_activity": 99.83,
+            "compute_efficiency": 1263.98,
+            "compute_load": 1263.32
         },
         {
             "stage": "Step_7_Loading",
-            "duration_sec": 0.0001,
+            "duration_sec": 0.0002,
             "start_memory_mb": 22072.44,
             "end_memory_mb": 22046.01,
             "peak_memory_mb": 22072.44,
@@ -245,20 +245,20 @@
         },
         {
             "stage": "Step_7_Inference",
-            "duration_sec": 6.8515,
+            "duration_sec": 12.6681,
             "start_memory_mb": 22046.01,
             "end_memory_mb": 22072.44,
             "peak_memory_mb": 32021.09,
             "memory_delta_mb": 26.43,
             "activation_memory_estimate_mb": 9975.08,
-            "gpu_utilization": 99.8,
+            "gpu_utilization": 99.87,
             "sm_activity": 100.0,
-            "compute_efficiency": 683.75,
-            "compute_load": 685.15
+            "compute_efficiency": 1265.14,
+            "compute_load": 1266.81
         },
         {
             "stage": "Step_8_Loading",
-            "duration_sec": 0.0001,
+            "duration_sec": 0.0003,
             "start_memory_mb": 22072.44,
             "end_memory_mb": 22046.01,
             "peak_memory_mb": 22072.44,
@@ -271,20 +271,20 @@
         },
         {
             "stage": "Step_8_Inference",
-            "duration_sec": 6.8531,
+            "duration_sec": 12.6845,
             "start_memory_mb": 22046.01,
             "end_memory_mb": 22072.44,
             "peak_memory_mb": 32021.09,
             "memory_delta_mb": 26.43,
             "activation_memory_estimate_mb": 9975.08,
-            "gpu_utilization": 99.94,
+            "gpu_utilization": 99.8,
             "sm_activity": 100.0,
-            "compute_efficiency": 684.91,
-            "compute_load": 685.31
+            "compute_efficiency": 1265.96,
+            "compute_load": 1268.45
         },
         {
             "stage": "Step_9_Loading",
-            "duration_sec": 0.0001,
+            "duration_sec": 0.0003,
             "start_memory_mb": 22072.44,
             "end_memory_mb": 22046.01,
             "peak_memory_mb": 22072.44,
@@ -297,7 +297,7 @@
         },
         {
             "stage": "Step_9_Inference",
-            "duration_sec": 6.8544,
+            "duration_sec": 12.6998,
             "start_memory_mb": 22046.01,
             "end_memory_mb": 22071.85,
             "peak_memory_mb": 32021.09,
@@ -305,34 +305,34 @@
             "activation_memory_estimate_mb": 9975.08,
             "gpu_utilization": 99.8,
             "sm_activity": 100.0,
-            "compute_efficiency": 684.03,
-            "compute_load": 685.44
+            "compute_efficiency": 1267.5,
+            "compute_load": 1269.98
         },
         {
             "stage": "VAE_Decoding",
-            "duration_sec": 23.8433,
-            "start_memory_mb": 22071.85,
-            "end_memory_mb": 23732.16,
-            "peak_memory_mb": 43179.76,
+            "duration_sec": 45.9695,
+            "start_memory_mb": 2999.17,
+            "end_memory_mb": 4659.48,
+            "peak_memory_mb": 24106.38,
             "memory_delta_mb": 1660.31,
-            "activation_memory_estimate_mb": 21107.91,
-            "gpu_utilization": 99.77,
-            "sm_activity": 100.0,
-            "compute_efficiency": 2378.92,
-            "compute_load": 2384.33
+            "activation_memory_estimate_mb": 21107.21,
+            "gpu_utilization": 99.95,
+            "sm_activity": 99.82,
+            "compute_efficiency": 4594.68,
+            "compute_load": 4588.78
         },
         {
             "stage": "Total_Execution",
-            "duration_sec": 150.3312,
+            "duration_sec": 323.8448,
             "start_memory_mb": 0.0,
-            "end_memory_mb": 21779.82,
-            "peak_memory_mb": 43179.76,
-            "memory_delta_mb": 21779.82,
-            "activation_memory_estimate_mb": 43179.76,
-            "gpu_utilization": 62.32,
-            "sm_activity": 61.29,
-            "compute_efficiency": 9368.43,
-            "compute_load": 9213.59
+            "end_memory_mb": 2707.14,
+            "peak_memory_mb": 32021.09,
+            "memory_delta_mb": 2707.14,
+            "activation_memory_estimate_mb": 32021.09,
+            "gpu_utilization": 55.68,
+            "sm_activity": 54.05,
+            "compute_efficiency": 18031.81,
+            "compute_load": 17502.99
         }
     ],
     "config": {
@@ -340,12 +340,12 @@
         "size": "1280*704",
         "frame_num": 161,
         "ckpt_dir": "/workspace/Wan2.2-Enhanced/Wan2.2-TI2V-5B",
-        "offload_model": false,
+        "offload_model": true,
         "ulysses_size": 1,
         "t5_fsdp": false,
         "t5_cpu": true,
         "dit_fsdp": false,
-        "save_file": "ti2v-5B_1280*704_1_Two_anthropomorphic_cats_in_comfy_boxing_gear_and__20251220_194358.mp4",
+        "save_file": "ti2v-5B_1280*704_1_Two_anthropomorphic_cats_in_comfy_boxing_gear_and__20251221_161856.mp4",
         "prompt": "Two anthropomorphic cats in comfy boxing gear and bright gloves fight intensely on a spotlighted stage.",
         "use_prompt_extend": false,
         "prompt_extend_method": "local_qwen",
@@ -364,5 +364,5 @@
         "start_from_ref": false,
         "infer_frames": 80
     },
-    "max_memory_used_gb": 42.17
+    "max_memory_used_gb": 31.27
 }

@@ -3,27 +3,27 @@
 ================================================================================
 
 [System Context]
-Device:       NVIDIA RTX PRO 6000 Blackwell Server Edition (94.98 GB)
+Device:       NVIDIA L40S (44.52 GB)
 Software:     CUDA 12.8 | PyTorch 2.9.1+cu128
 Task Config:  ti2v-5B | 1280*704 | 161 Frames | 5 Steps
 Optimization: Offload=ON | Precision=FP16/FP32
 
 [Executive Summary]
 --------------------------------------------------------------------------------
-✅ Total Latency:       126.25 s
-⚡ Generation Speed:    6.87 s/step (0.15 steps/s)
-📹 Video Throughput:    2.29 frames/s (2.07 MPx/s)
-💾 Peak Memory:         31.27 GB (32.9% of VRAM)
-🌡️  Avg GPU Activity:    93.0% (Compute Score: 11744.1)
+✅ Total Latency:       265.59 s
+⚡ Generation Speed:    12.55 s/step (0.08 steps/s)
+📹 Video Throughput:    1.04 frames/s (0.94 MPx/s)
+💾 Peak Memory:         31.27 GB (70.2% of VRAM)
+🌡️  Avg GPU Activity:    83.8% (Compute Score: 22255.1)
 
 [Detailed Pipeline Latency]
 --------------------------------------------------------------------------------
-1. Initialization     :  42.29 s ( 33.5%)
-2. Text Encoding (T5) :  12.10 s (  9.6%)
-3. Denoising (DiT)    :  34.35 s ( 27.2%)
-   - First Step       : 6.97 s
-   - Avg Step (Stable): 6.87 s
-4. VAE Decoding       :  23.78 s ( 18.8%)
+1. Initialization     :  86.58 s ( 32.6%)
+2. Text Encoding (T5) :  46.27 s ( 17.4%)
+3. Denoising (DiT)    :  62.76 s ( 23.6%)
+   - First Step       : 12.68 s
+   - Avg Step (Stable): 12.55 s
+4. VAE Decoding       :  45.70 s ( 17.2%)
 
 [Memory Telemetry]
 --------------------------------------------------------------------------------
@@ -36,28 +36,27 @@ Allocation Strategy: [Offload Active]
 [Expert Recommendations]
 --------------------------------------------------------------------------------
 > ℹ️ Offloading is active. This reduces VRAM but may increase latency slightly due to PCI-e transfers.
-     Action: You have plenty of VRAM. Disable offloading (--offload_model False) for faster generation.
 > ℹ️ Step speed is < 1 step/s. Consider using Flash Attention 2 or FP8 quantization if supported.
 
 [Execution Trace Analysis]
 -------------------------------------------------------------------------------------------------------------------------------------------------
 Stage Name                | Time (s) |  SM % |   Load | Mem Start |   Mem End |  Peak Mem |     Mem Δ | Comment
 -------------------------------------------------------------------------------------------------------------------------------------------------
-Model_Initialization      |    42.28 |   0.6 |   27.2 |      0.00 |      2.63 |      2.63 |      2.63 | Sys Init
+Model_Initialization      |    86.56 |   0.0 |    3.1 |      0.00 |      2.63 |      2.63 |      2.63 | Sys Init
 TI2V_Preprocess           |     0.00 |   0.0 |    0.0 |      2.63 |      2.63 |      2.63 |      0.00 | 
-T5_Encoding               |    12.10 |   0.0 |    0.0 |      2.63 |      2.63 |      2.63 |      0.00 | Text Enc
-S0_Loading                |     0.00 |   0.0 |    0.0 |     21.34 |     21.34 |     21.34 |      0.00 | Cached/NoOp
-S0                        |     6.97 | 100.0 |  697.3 |     21.34 |     21.48 |     31.12 |      0.14 | Compute Heavy
+T5_Encoding               |    46.27 |   0.0 |    0.0 |      2.63 |      2.63 |      2.63 |      0.00 | Text Enc
+S0_Loading                |     0.01 |   0.0 |    0.0 |     21.34 |     21.34 |     21.34 |      0.00 | Cached/NoOp
+S0                        |    12.68 |  99.4 | 1260.3 |     21.34 |     21.48 |     31.12 |      0.14 | Compute Heavy
 S1_Loading                |     0.00 |   0.0 |    0.0 |     21.48 |     21.48 |     21.48 |      0.00 | Cached/NoOp
-S1                        |     6.83 | 100.0 |  682.8 |     21.48 |     21.55 |     31.22 |      0.08 | Compute Heavy
+S1                        |    12.41 |  99.6 | 1236.1 |     21.48 |     21.55 |     31.22 |      0.08 | Compute Heavy
 S2_Loading                |     0.00 |   0.0 |    0.0 |     21.55 |     21.53 |     21.55 |     -0.03 | Cached/NoOp
-S2                        |     6.87 | 100.0 |  686.7 |     21.53 |     21.56 |     31.27 |      0.03 | Compute Heavy
+S2                        |    12.52 |  99.2 | 1241.3 |     21.53 |     21.56 |     31.27 |      0.03 | Compute Heavy
 S3_Loading                |     0.00 |   0.0 |    0.0 |     21.56 |     21.53 |     21.56 |     -0.03 | Cached/NoOp
-S3                        |     6.84 | 100.0 |  684.0 |     21.53 |     21.56 |     31.27 |      0.03 | Compute Heavy
+S3                        |    12.55 |  97.8 | 1228.3 |     21.53 |     21.56 |     31.27 |      0.03 | Compute Heavy
 S4_Loading                |     0.00 |   0.0 |    0.0 |     21.56 |     21.53 |     21.56 |     -0.03 | Cached/NoOp
-S4                        |     6.84 | 100.0 |  684.4 |     21.53 |     21.56 |     31.27 |      0.03 | Compute Heavy
-VAE_Decoding              |    23.78 |  98.2 | 2335.2 |      2.93 |      4.55 |     23.54 |      1.62 | Decoding
-Total_Execution           |   126.14 |  46.7 | 5887.1 |      0.00 |      2.64 |     31.27 |      2.64 | 
+S4                        |    12.60 | 100.0 | 1259.5 |     21.53 |     21.56 |     31.27 |      0.03 | Compute Heavy
+VAE_Decoding              |    45.70 |  99.9 | 4565.6 |      2.93 |      4.55 |     23.54 |      1.62 | Decoding
+Total_Execution           |   265.43 |  41.4 | 11000.3 |      0.00 |      2.64 |     31.27 |      2.64 | 
 -------------------------------------------------------------------------------------------------------------------------------------------------
 Legend: SM% = SM Activity | Load = Duration * SM% | Mem values in GB
 ================================================================================

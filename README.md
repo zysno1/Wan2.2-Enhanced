@@ -46,12 +46,22 @@ python3 benchmark/run.py
 ```
 
 ## 5. 测试结果
-以下为 **Group B (RTX PRO 6000 Blackwell)** 的实测数据：
+### Group A: NVIDIA L40S (48GB)
 
 | Case | Res | Offload | Time (s) | Mem (GB) | SM Act (%) | Compute Load |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **01_Speed_Preview** | 1280*704 | ✅ True | 122.62 | 31.27 | 97.0 | 11,533 |
-| **02_Efficiency_Mode** | 1280*704 | ✅ True | 156.46 | 31.27 | 99.9 | 18,662 |
-| **03_Performance_Mode** | 1280*704 | ❌ False | 146.78 | 42.17 | 100.0 | 18,589 |
+| **01_Speed_Preview** | 1280*704 | ✅ True | 265.59 | 31.27 | 99.2 | 21,795 |
+| **02_Efficiency_Mode** | 1280*704 | ✅ True | 331.14 | 31.27 | 99.1 | 34,636 |
+| **03_Performance_Mode** | 1280*704 | ✅ True* | 324.00 | 31.27 | 99.2 | 34,637 |
+
+> *注: 由于 L40S (48GB) 无法在 Offload=False 模式下运行 720p 生成 (OOM)，因此 Case 03 调整为 Offload=True，其表现与 Case 02 基本一致。*
+
+### Group B: NVIDIA RTX PRO 6000 Blackwell (96GB)
+
+| Case | Res | Offload | Time (s) | Mem (GB) | SM Act (%) | Compute Load |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **01_Speed_Preview** | 1280*704 | ✅ True | 126.25 | 31.27 | 100.0 | 11,685 |
+| **02_Efficiency_Mode** | 1280*704 | ✅ True | 168.78 | 31.27 | 99.9 | 18,511 |
+| **03_Performance_Mode** | 1280*704 | ❌ False | 150.43 | 42.17 | 98.5 | 18,358 |
 
 > **详细分析报告**: 请参阅 [benchmark_report.md](./benchmark_report.md) 获取各阶段（编码、推理、解码）的详细耗时与算力分析。
