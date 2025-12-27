@@ -2,84 +2,15 @@
 
 | Case                   | Res        | Offload |  Time(s) | s/step | Mem(GB) | SM(%) |   Load |
 |------------------------|------------|---------|----------|--------|---------|-------|--------|
-| 01_Speed_Preview_704p  | 1280*704   | True    |   125.39 |   6.88 |   31.27 |  98.5 |      0 |
-| 02_Efficiency_Quality_704p | 1280*704   | True    |   295.03 |   6.88 |   31.27 |  99.8 |      0 |
-| 03_Max_Quality_704p    | 1280*704   | False   |   420.81 |   6.88 |   52.76 |  99.8 |      0 |
-| 04_15s_50steps_720p    | 1280*704   | True    |  1238.48 |  22.32 |   43.46 |  99.9 |      0 |
+| 01_Speed_Preview_704p  | 1280*704   | True    |   144.27 |   6.93 |   31.27 |  98.7 |      0 |
+| 02_Efficiency_Quality_704p | 1280*704   | True    |   569.13 |  15.06 |   31.27 | 100.0 |      0 |
+| 04_15s_50steps_720p    | 1280*704   | True    |  2197.13 |  41.53 |   43.46 | 100.0 |      0 |
 
 # Detailed Breakdown
 
-## Case: 01_5B_Speed_Preview_704p
-
-- **Total Duration**: 143.25 s
-- **Peak GPU Memory**: 31.27 GB
-- **Total Compute Load**: 11546
-
-### Stage Breakdown
-
-| Stage | Time (s) | GPU Mem (GB) | CPU (%) | Sys Mem (GB) | SM Act (%) | Comp Load |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Unknown | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 21.34 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.12 | 0.0 | 0.00 | 100.0 | 710 |
-| Unknown | 0.00 | 21.48 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.22 | 0.0 | 0.00 | 100.0 | 684 |
-| Unknown | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 100.0 | 690 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 97.1 | 665 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 100.0 | 685 |
-| Unknown | 0.00 | 23.54 | 0.0 | 0.00 | 96.4 | 2299 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 40.6 | 5813 |
-
-### Performance Analysis
-
-No significant bottlenecks detected. GPU utilization is healthy.
-
-**Resource Usage Overview:**
-- Peak GPU Memory reached 31.27 GB. VRAM usage is within safe margins.
----
-
-## Case: 01_Speed_Preview_480p
-
-- **Total Duration**: 114.94 s
-- **Peak GPU Memory**: 31.27 GB
-- **Total Compute Load**: 11672
-
-### Stage Breakdown
-
-| Stage | Time (s) | GPU Mem (GB) | CPU (%) | Sys Mem (GB) | SM Act (%) | Comp Load |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Unknown | 0.00 | 2.63 | 5.8 | 301.34 | 0.0 | 0 |
-| Unknown | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 2.63 | 14.9 | 298.49 | 0.0 | 0 |
-| Unknown | 0.00 | 21.34 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.12 | 5.1 | 298.61 | 99.4 | 695 |
-| Unknown | 0.00 | 21.48 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.22 | 5.9 | 298.43 | 100.0 | 683 |
-| Unknown | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 5.8 | 298.41 | 100.0 | 686 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 9.4 | 300.61 | 100.0 | 684 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 4.1 | 300.37 | 99.7 | 682 |
-| Unknown | 0.00 | 23.54 | 3.4 | 318.29 | 100.0 | 2374 |
-| Unknown | 0.00 | 31.27 | 6.3 | 318.96 | 51.1 | 5868 |
-
-### Performance Analysis
-
-No significant bottlenecks detected. GPU utilization is healthy.
-
-**Resource Usage Overview:**
-- Peak GPU Memory reached 31.27 GB. VRAM usage is within safe margins.
----
-
 ## Case: 01_Speed_Preview_704p
 
-- **Total Duration**: 125.39 s
+- **Total Duration**: 144.27 s
 - **Peak GPU Memory**: 31.27 GB
 - **Total Compute Load**: 0
 
@@ -87,121 +18,33 @@ No significant bottlenecks detected. GPU utilization is healthy.
 
 | Stage | Time (s) | GPU Mem (GB) | CPU (%) | Sys Mem (GB) | SM Act (%) | Comp Load |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Model_Initialization | 39.07 | 2.63 | 16.1 | 155.45 | 0.0 | 0 |
+| Model_Initialization | 39.39 | 2.63 | 9.1 | 329.50 | 80.6 | 0 |
 | TI2V_Preprocess | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| T5_Encoding | 12.92 | 2.63 | 23.7 | 144.21 | 0.6 | 0 |
+| T5_Encoding | 13.05 | 2.63 | 16.9 | 319.59 | 23.3 | 0 |
 | Step_0_Loading | 0.00 | 21.34 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_0_Inference | 6.99 | 31.12 | 13.4 | 144.23 | 93.8 | 0 |
+| Step_0_Inference | 7.09 | 31.12 | 7.8 | 288.23 | 93.8 | 0 |
 | Step_1_Loading | 0.00 | 21.48 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_1_Inference | 6.84 | 31.22 | 12.9 | 143.99 | 100.0 | 0 |
+| Step_1_Inference | 6.88 | 31.22 | 8.0 | 294.19 | 99.9 | 0 |
 | Step_2_Loading | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_2_Inference | 6.88 | 31.27 | 13.1 | 143.05 | 99.8 | 0 |
+| Step_2_Inference | 6.90 | 31.27 | 8.0 | 302.96 | 99.9 | 0 |
 | Step_3_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_3_Inference | 6.85 | 31.27 | 13.1 | 142.73 | 99.1 | 0 |
+| Step_3_Inference | 6.88 | 31.27 | 13.3 | 309.59 | 100.0 | 0 |
 | Step_4_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_4_Inference | 6.86 | 31.27 | 13.4 | 141.76 | 100.0 | 0 |
-| VAE_Decoding | 23.86 | 23.54 | 13.6 | 185.53 | 99.2 | 0 |
-| Total_Execution | 120.18 | 31.27 | 15.5 | 185.53 | 49.6 | 0 |
+| Step_4_Inference | 6.88 | 31.27 | 17.0 | 310.43 | 100.0 | 0 |
+| VAE_Decoding | 42.39 | 23.54 | 12.9 | 330.96 | 99.5 | 0 |
+| Total_Execution | 143.96 | 31.27 | 12.2 | 330.96 | 80.0 | 0 |
 
 ### Inference Statistics
 
-- **Avg Time per Step**: 6.88 s
-- **Avg SM Activity**: 98.5 %
-- **Avg CPU Utilization**: 13.2 %
+- **Avg Time per Step**: 6.93 s
+- **Avg SM Activity**: 98.7 %
+- **Avg CPU Utilization**: 10.8 %
 - **Total Inference Load**: 0
 
 ### Performance Analysis
 
 **Bottlenecks Detected:**
 - Low overall GPU utilization (0.0%), suggesting potential CPU bottlenecks or data loading overhead.
-
-**Resource Usage Overview:**
-- Peak GPU Memory reached 31.27 GB. VRAM usage is within safe margins.
----
-
-## Case: 02_5B_Efficiency_Mode_704p
-
-- **Total Duration**: 151.58 s
-- **Peak GPU Memory**: 31.27 GB
-- **Total Compute Load**: 18624
-
-### Stage Breakdown
-
-| Stage | Time (s) | GPU Mem (GB) | CPU (%) | Sys Mem (GB) | SM Act (%) | Comp Load |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Unknown | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 21.34 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.12 | 0.0 | 0.00 | 100.0 | 700 |
-| Unknown | 0.00 | 21.48 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.22 | 0.0 | 0.00 | 100.0 | 684 |
-| Unknown | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 99.9 | 686 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 100.0 | 685 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 100.0 | 686 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 99.3 | 681 |
-| Unknown | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 99.9 | 685 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 100.0 | 686 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 100.0 | 686 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 100.0 | 686 |
-| Unknown | 0.00 | 23.54 | 0.0 | 0.00 | 100.0 | 2391 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 61.9 | 9368 |
-
-### Performance Analysis
-
-No significant bottlenecks detected. GPU utilization is healthy.
-
-**Resource Usage Overview:**
-- Peak GPU Memory reached 31.27 GB. VRAM usage is within safe margins.
----
-
-## Case: 02_Efficiency_Mode_720p
-
-- **Total Duration**: 187.44 s
-- **Peak GPU Memory**: 31.27 GB
-- **Total Compute Load**: 18702
-
-### Stage Breakdown
-
-| Stage | Time (s) | GPU Mem (GB) | CPU (%) | Sys Mem (GB) | SM Act (%) | Comp Load |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Unknown | 0.00 | 2.63 | 13.9 | 132.90 | 0.1 | 4 |
-| Unknown | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 2.63 | 22.9 | 122.48 | 0.0 | 0 |
-| Unknown | 0.00 | 21.34 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.12 | 12.6 | 121.66 | 100.0 | 721 |
-| Unknown | 0.00 | 21.48 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.22 | 12.9 | 121.23 | 100.0 | 684 |
-| Unknown | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 12.3 | 120.96 | 100.0 | 694 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 12.3 | 121.16 | 100.0 | 685 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 12.1 | 121.60 | 99.3 | 680 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 11.8 | 120.99 | 100.0 | 686 |
-| Unknown | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 7.7 | 120.02 | 100.0 | 686 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 9.0 | 122.60 | 100.0 | 686 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 13.6 | 122.35 | 100.0 | 687 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 12.1 | 121.08 | 100.0 | 687 |
-| Unknown | 0.00 | 23.54 | 11.7 | 139.83 | 99.8 | 2413 |
-| Unknown | 0.00 | 31.27 | 13.2 | 140.19 | 50.1 | 9390 |
-
-### Performance Analysis
-
-No significant bottlenecks detected. GPU utilization is healthy.
 
 **Resource Usage Overview:**
 - Peak GPU Memory reached 31.27 GB. VRAM usage is within safe margins.
@@ -209,7 +52,7 @@ No significant bottlenecks detected. GPU utilization is healthy.
 
 ## Case: 02_Efficiency_Quality_704p
 
-- **Total Duration**: 295.03 s
+- **Total Duration**: 569.13 s
 - **Peak GPU Memory**: 31.27 GB
 - **Total Compute Load**: 0
 
@@ -217,77 +60,77 @@ No significant bottlenecks detected. GPU utilization is healthy.
 
 | Stage | Time (s) | GPU Mem (GB) | CPU (%) | Sys Mem (GB) | SM Act (%) | Comp Load |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Model_Initialization | 37.07 | 2.63 | 15.8 | 180.03 | 0.2 | 0 |
+| Model_Initialization | 40.03 | 2.63 | 8.0 | 295.15 | 99.9 | 0 |
 | TI2V_Preprocess | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| T5_Encoding | 12.73 | 2.63 | 24.4 | 146.29 | 0.3 | 0 |
-| Step_0_Loading | 0.00 | 21.34 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_0_Inference | 6.98 | 31.12 | 16.9 | 156.79 | 96.7 | 0 |
+| T5_Encoding | 12.62 | 2.63 | 16.5 | 286.37 | 98.6 | 0 |
+| Step_0_Loading | 0.01 | 21.34 | 0.0 | 0.00 | 0.0 | 0 |
+| Step_0_Inference | 15.22 | 31.12 | 6.7 | 285.67 | 100.0 | 0 |
 | Step_1_Loading | 0.00 | 21.48 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_1_Inference | 6.84 | 31.22 | 14.5 | 156.77 | 99.8 | 0 |
+| Step_1_Inference | 15.07 | 31.22 | 6.7 | 285.45 | 100.0 | 0 |
 | Step_2_Loading | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_2_Inference | 6.89 | 31.27 | 13.5 | 157.93 | 99.9 | 0 |
+| Step_2_Inference | 15.10 | 31.27 | 6.9 | 285.22 | 100.0 | 0 |
 | Step_3_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_3_Inference | 6.85 | 31.27 | 15.6 | 157.44 | 100.0 | 0 |
+| Step_3_Inference | 15.06 | 31.27 | 7.5 | 285.06 | 100.0 | 0 |
 | Step_4_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_4_Inference | 6.86 | 31.27 | 17.7 | 157.06 | 99.9 | 0 |
+| Step_4_Inference | 15.07 | 31.27 | 7.4 | 285.11 | 100.0 | 0 |
 | Step_5_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_5_Inference | 6.86 | 31.27 | 14.2 | 157.52 | 99.9 | 0 |
+| Step_5_Inference | 15.06 | 31.27 | 7.6 | 285.14 | 100.0 | 0 |
 | Step_6_Loading | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_6_Inference | 6.87 | 31.27 | 14.7 | 157.65 | 100.0 | 0 |
+| Step_6_Inference | 15.06 | 31.27 | 8.1 | 284.99 | 100.0 | 0 |
 | Step_7_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_7_Inference | 6.87 | 31.27 | 13.0 | 157.86 | 100.0 | 0 |
+| Step_7_Inference | 15.06 | 31.27 | 7.2 | 284.96 | 100.0 | 0 |
 | Step_8_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_8_Inference | 6.87 | 31.27 | 19.6 | 157.72 | 99.8 | 0 |
+| Step_8_Inference | 15.06 | 31.27 | 7.2 | 284.73 | 100.0 | 0 |
 | Step_9_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_9_Inference | 6.88 | 31.27 | 13.0 | 157.78 | 100.0 | 0 |
+| Step_9_Inference | 15.06 | 31.27 | 7.6 | 284.63 | 100.0 | 0 |
 | Step_10_Loading | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_10_Inference | 6.87 | 31.27 | 12.3 | 157.70 | 99.8 | 0 |
+| Step_10_Inference | 15.06 | 31.27 | 7.8 | 284.69 | 100.0 | 0 |
 | Step_11_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_11_Inference | 6.88 | 31.27 | 13.3 | 157.04 | 99.9 | 0 |
+| Step_11_Inference | 15.05 | 31.27 | 7.8 | 284.66 | 100.0 | 0 |
 | Step_12_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_12_Inference | 6.88 | 31.27 | 13.4 | 157.46 | 100.0 | 0 |
+| Step_12_Inference | 15.05 | 31.27 | 7.5 | 284.72 | 100.0 | 0 |
 | Step_13_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_13_Inference | 6.88 | 31.27 | 13.0 | 157.59 | 99.9 | 0 |
+| Step_13_Inference | 15.06 | 31.27 | 7.7 | 284.70 | 100.0 | 0 |
 | Step_14_Loading | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_14_Inference | 6.88 | 31.27 | 13.3 | 157.39 | 99.9 | 0 |
+| Step_14_Inference | 15.06 | 31.27 | 7.7 | 284.80 | 100.0 | 0 |
 | Step_15_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_15_Inference | 6.88 | 31.27 | 13.1 | 157.74 | 100.0 | 0 |
-| Step_16_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_16_Inference | 6.88 | 31.27 | 12.2 | 183.40 | 100.0 | 0 |
+| Step_15_Inference | 15.05 | 31.27 | 7.9 | 284.84 | 100.0 | 0 |
+| Step_16_Loading | 0.00 | 21.56 | 7.1 | 284.76 | 0.0 | 0 |
+| Step_16_Inference | 15.06 | 31.27 | 7.5 | 284.85 | 100.0 | 0 |
 | Step_17_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_17_Inference | 6.87 | 31.27 | 8.8 | 183.59 | 99.9 | 0 |
+| Step_17_Inference | 15.05 | 31.27 | 7.7 | 284.75 | 100.0 | 0 |
 | Step_18_Loading | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_18_Inference | 6.88 | 31.27 | 13.8 | 159.78 | 100.0 | 0 |
-| Step_19_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_19_Inference | 6.88 | 31.27 | 12.9 | 159.55 | 99.8 | 0 |
+| Step_18_Inference | 15.06 | 31.27 | 7.8 | 284.76 | 100.0 | 0 |
+| Step_19_Loading | 0.00 | 21.56 | 7.1 | 284.68 | 100.0 | 0 |
+| Step_19_Inference | 15.06 | 31.27 | 8.1 | 284.79 | 100.0 | 0 |
 | Step_20_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_20_Inference | 6.88 | 31.27 | 13.1 | 159.31 | 100.0 | 0 |
-| Step_21_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_21_Inference | 6.88 | 31.27 | 13.4 | 158.52 | 99.9 | 0 |
+| Step_20_Inference | 15.06 | 31.27 | 7.9 | 285.02 | 100.0 | 0 |
+| Step_21_Loading | 0.00 | 21.56 | 7.4 | 284.87 | 0.0 | 0 |
+| Step_21_Inference | 15.05 | 31.27 | 8.0 | 284.91 | 100.0 | 0 |
 | Step_22_Loading | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_22_Inference | 6.88 | 31.27 | 14.4 | 158.67 | 99.8 | 0 |
+| Step_22_Inference | 15.05 | 31.27 | 7.9 | 284.86 | 100.0 | 0 |
 | Step_23_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_23_Inference | 6.88 | 31.27 | 16.3 | 158.39 | 100.0 | 0 |
+| Step_23_Inference | 15.06 | 31.27 | 8.0 | 284.82 | 100.0 | 0 |
 | Step_24_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_24_Inference | 6.88 | 31.27 | 12.6 | 157.78 | 99.9 | 0 |
+| Step_24_Inference | 15.06 | 31.27 | 6.9 | 284.70 | 100.0 | 0 |
 | Step_25_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_25_Inference | 6.88 | 31.27 | 12.7 | 157.63 | 100.0 | 0 |
+| Step_25_Inference | 15.06 | 31.27 | 6.8 | 284.69 | 100.0 | 0 |
 | Step_26_Loading | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_26_Inference | 6.88 | 31.27 | 13.5 | 157.63 | 99.8 | 0 |
+| Step_26_Inference | 15.05 | 31.27 | 7.4 | 286.97 | 100.0 | 0 |
 | Step_27_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_27_Inference | 6.88 | 31.27 | 12.1 | 157.63 | 100.0 | 0 |
+| Step_27_Inference | 15.05 | 31.27 | 7.3 | 287.00 | 100.0 | 0 |
 | Step_28_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_28_Inference | 6.88 | 31.27 | 13.0 | 157.12 | 100.0 | 0 |
+| Step_28_Inference | 15.05 | 31.27 | 6.6 | 286.77 | 100.0 | 0 |
 | Step_29_Loading | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_29_Inference | 6.88 | 31.27 | 13.1 | 157.14 | 99.8 | 0 |
-| VAE_Decoding | 23.95 | 23.54 | 12.9 | 201.86 | 98.5 | 0 |
-| Total_Execution | 289.85 | 31.27 | 14.4 | 201.86 | 80.1 | 0 |
+| Step_29_Inference | 15.04 | 31.27 | 8.0 | 289.11 | 100.0 | 0 |
+| VAE_Decoding | 52.16 | 23.54 | 7.5 | 307.34 | 100.0 | 0 |
+| Total_Execution | 568.90 | 31.27 | 7.7 | 308.03 | 100.0 | 0 |
 
 ### Inference Statistics
 
-- **Avg Time per Step**: 6.88 s
-- **Avg SM Activity**: 99.8 %
-- **Avg CPU Utilization**: 13.8 %
+- **Avg Time per Step**: 15.06 s
+- **Avg SM Activity**: 100.0 %
+- **Avg CPU Utilization**: 7.5 %
 - **Total Inference Load**: 0
 
 ### Performance Analysis
@@ -299,53 +142,9 @@ No significant bottlenecks detected. GPU utilization is healthy.
 - Peak GPU Memory reached 31.27 GB. VRAM usage is within safe margins.
 ---
 
-## Case: 03_5B_Performance_Mode_704p
-
-- **Total Duration**: 146.27 s
-- **Peak GPU Memory**: 42.17 GB
-- **Total Compute Load**: 18587
-
-### Stage Breakdown
-
-| Stage | Time (s) | GPU Mem (GB) | CPU (%) | Sys Mem (GB) | SM Act (%) | Comp Load |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Unknown | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 21.34 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.12 | 0.0 | 0.00 | 100.0 | 702 |
-| Unknown | 0.00 | 21.48 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.22 | 0.0 | 0.00 | 100.0 | 684 |
-| Unknown | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 100.0 | 688 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 100.0 | 685 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 99.4 | 682 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 100.0 | 686 |
-| Unknown | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 100.0 | 686 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 100.0 | 686 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 100.0 | 686 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 0.0 | 0.00 | 100.0 | 686 |
-| Unknown | 0.00 | 42.17 | 0.0 | 0.00 | 100.0 | 2395 |
-| Unknown | 0.00 | 42.17 | 0.0 | 0.00 | 63.8 | 9322 |
-
-### Performance Analysis
-
-No significant bottlenecks detected. GPU utilization is healthy.
-
-**Resource Usage Overview:**
-- Peak GPU Memory reached 42.17 GB. High VRAM usage, close to 48GB limit on L40S.
----
-
 ## Case: 03_Max_Quality_704p
 
-- **Total Duration**: 420.81 s
+- **Total Duration**: 707.29 s
 - **Peak GPU Memory**: 52.76 GB
 - **Total Compute Load**: 0
 
@@ -353,117 +152,117 @@ No significant bottlenecks detected. GPU utilization is healthy.
 
 | Stage | Time (s) | GPU Mem (GB) | CPU (%) | Sys Mem (GB) | SM Act (%) | Comp Load |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Model_Initialization | 41.95 | 2.63 | 15.0 | 169.58 | 0.0 | 0 |
+| Model_Initialization | 39.83 | 2.63 | 14.5 | 330.96 | 77.2 | 0 |
 | TI2V_Preprocess | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| T5_Encoding | 1.33 | 13.47 | 14.7 | 157.03 | 21.5 | 0 |
-| Step_0_Loading | 0.00 | 31.94 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_0_Inference | 6.90 | 41.71 | 14.4 | 147.27 | 95.7 | 0 |
-| Step_1_Loading | 0.00 | 32.07 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_1_Inference | 6.84 | 41.81 | 16.7 | 147.16 | 100.0 | 0 |
+| T5_Encoding | 1.36 | 13.47 | 17.1 | 322.22 | 100.0 | 0 |
+| Step_0_Loading | 0.01 | 31.94 | 0.0 | 0.00 | 0.0 | 0 |
+| Step_0_Inference | 15.13 | 41.71 | 15.8 | 319.82 | 100.0 | 0 |
+| Step_1_Loading | 0.00 | 32.07 | 8.5 | 311.73 | 0.0 | 0 |
+| Step_1_Inference | 15.07 | 41.81 | 8.9 | 313.11 | 100.0 | 0 |
 | Step_2_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_2_Inference | 6.88 | 41.86 | 16.7 | 146.97 | 99.9 | 0 |
+| Step_2_Inference | 8.84 | 41.86 | 8.1 | 303.01 | 100.0 | 0 |
 | Step_3_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_3_Inference | 6.86 | 41.86 | 18.5 | 146.44 | 100.0 | 0 |
+| Step_3_Inference | 6.88 | 41.86 | 6.6 | 272.00 | 98.9 | 0 |
 | Step_4_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_4_Inference | 6.86 | 41.86 | 15.8 | 169.83 | 99.8 | 0 |
+| Step_4_Inference | 6.89 | 41.86 | 6.7 | 280.49 | 100.0 | 0 |
 | Step_5_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_5_Inference | 6.86 | 41.86 | 13.4 | 173.65 | 99.8 | 0 |
+| Step_5_Inference | 6.88 | 41.86 | 6.7 | 289.34 | 100.0 | 0 |
 | Step_6_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_6_Inference | 6.86 | 41.86 | 13.1 | 149.90 | 100.0 | 0 |
+| Step_6_Inference | 6.88 | 41.86 | 6.7 | 293.25 | 99.9 | 0 |
 | Step_7_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_7_Inference | 6.87 | 41.86 | 12.9 | 149.24 | 99.8 | 0 |
+| Step_7_Inference | 6.89 | 41.86 | 6.9 | 293.31 | 100.0 | 0 |
 | Step_8_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_8_Inference | 6.87 | 41.86 | 12.6 | 148.59 | 99.8 | 0 |
+| Step_8_Inference | 6.92 | 41.86 | 13.9 | 295.18 | 100.0 | 0 |
 | Step_9_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_9_Inference | 6.87 | 41.86 | 12.9 | 148.42 | 100.0 | 0 |
+| Step_9_Inference | 6.96 | 41.86 | 9.1 | 293.83 | 99.5 | 0 |
 | Step_10_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_10_Inference | 6.87 | 41.86 | 13.0 | 148.58 | 99.8 | 0 |
+| Step_10_Inference | 7.00 | 41.86 | 16.9 | 286.37 | 98.4 | 0 |
 | Step_11_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_11_Inference | 6.88 | 41.86 | 13.6 | 148.38 | 100.0 | 0 |
+| Step_11_Inference | 7.03 | 41.86 | 12.2 | 285.54 | 99.1 | 0 |
 | Step_12_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_12_Inference | 6.88 | 41.86 | 13.1 | 148.06 | 100.0 | 0 |
-| Step_13_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 100.0 | 0 |
-| Step_13_Inference | 6.88 | 41.86 | 13.0 | 148.11 | 99.8 | 0 |
+| Step_12_Inference | 13.63 | 41.86 | 6.7 | 285.67 | 100.0 | 0 |
+| Step_13_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
+| Step_13_Inference | 15.06 | 41.86 | 6.7 | 285.51 | 100.0 | 0 |
 | Step_14_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_14_Inference | 6.88 | 41.86 | 13.1 | 147.98 | 100.0 | 0 |
+| Step_14_Inference | 15.06 | 41.86 | 6.9 | 285.27 | 100.0 | 0 |
 | Step_15_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_15_Inference | 6.88 | 41.86 | 12.8 | 148.06 | 99.8 | 0 |
+| Step_15_Inference | 15.01 | 41.86 | 7.3 | 285.07 | 100.0 | 0 |
 | Step_16_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_16_Inference | 6.88 | 41.86 | 12.6 | 147.82 | 100.0 | 0 |
+| Step_16_Inference | 15.05 | 41.86 | 7.5 | 285.04 | 100.0 | 0 |
 | Step_17_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_17_Inference | 6.88 | 41.86 | 16.0 | 147.50 | 100.0 | 0 |
+| Step_17_Inference | 15.05 | 41.86 | 7.5 | 285.14 | 100.0 | 0 |
 | Step_18_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_18_Inference | 6.88 | 41.86 | 19.1 | 148.55 | 99.8 | 0 |
+| Step_18_Inference | 15.06 | 41.86 | 8.1 | 284.99 | 100.0 | 0 |
 | Step_19_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_19_Inference | 6.88 | 41.86 | 8.6 | 149.92 | 99.8 | 0 |
+| Step_19_Inference | 15.06 | 41.86 | 7.4 | 284.96 | 100.0 | 0 |
 | Step_20_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_20_Inference | 6.88 | 41.86 | 14.7 | 149.88 | 100.0 | 0 |
+| Step_20_Inference | 15.06 | 41.86 | 7.0 | 284.77 | 100.0 | 0 |
 | Step_21_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_21_Inference | 6.88 | 41.86 | 13.5 | 161.00 | 99.8 | 0 |
+| Step_21_Inference | 15.05 | 41.86 | 7.6 | 284.63 | 100.0 | 0 |
 | Step_22_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_22_Inference | 6.88 | 41.86 | 12.7 | 174.62 | 99.8 | 0 |
+| Step_22_Inference | 15.05 | 41.86 | 7.9 | 284.69 | 100.0 | 0 |
 | Step_23_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_23_Inference | 6.88 | 41.86 | 13.2 | 159.78 | 100.0 | 0 |
-| Step_24_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_24_Inference | 6.88 | 41.86 | 12.9 | 149.64 | 99.8 | 0 |
+| Step_23_Inference | 15.05 | 41.86 | 7.9 | 284.62 | 100.0 | 0 |
+| Step_24_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 100.0 | 0 |
+| Step_24_Inference | 15.05 | 41.86 | 7.5 | 284.71 | 100.0 | 0 |
 | Step_25_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_25_Inference | 6.88 | 41.86 | 12.7 | 150.12 | 100.0 | 0 |
+| Step_25_Inference | 15.06 | 41.86 | 7.6 | 284.73 | 100.0 | 0 |
 | Step_26_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_26_Inference | 6.88 | 41.86 | 13.3 | 149.95 | 99.8 | 0 |
+| Step_26_Inference | 15.05 | 41.86 | 7.8 | 284.80 | 100.0 | 0 |
 | Step_27_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_27_Inference | 6.88 | 41.86 | 12.8 | 149.87 | 99.9 | 0 |
+| Step_27_Inference | 15.05 | 41.86 | 7.9 | 284.84 | 100.0 | 0 |
 | Step_28_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_28_Inference | 6.88 | 41.86 | 13.3 | 150.19 | 100.0 | 0 |
+| Step_28_Inference | 15.05 | 41.86 | 7.4 | 284.85 | 100.0 | 0 |
 | Step_29_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_29_Inference | 6.88 | 41.86 | 13.0 | 150.04 | 99.8 | 0 |
+| Step_29_Inference | 15.05 | 41.86 | 7.5 | 284.72 | 100.0 | 0 |
 | Step_30_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_30_Inference | 6.88 | 41.86 | 13.0 | 149.29 | 100.0 | 0 |
-| Step_31_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_31_Inference | 6.88 | 41.86 | 15.3 | 149.59 | 99.8 | 0 |
+| Step_30_Inference | 15.06 | 41.86 | 8.0 | 284.77 | 100.0 | 0 |
+| Step_31_Loading | 0.00 | 32.14 | 7.1 | 284.69 | 0.0 | 0 |
+| Step_31_Inference | 15.06 | 41.86 | 8.1 | 284.75 | 100.0 | 0 |
 | Step_32_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_32_Inference | 6.88 | 41.86 | 18.7 | 149.21 | 100.0 | 0 |
+| Step_32_Inference | 15.06 | 41.86 | 7.9 | 285.01 | 100.0 | 0 |
 | Step_33_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_33_Inference | 6.88 | 41.86 | 12.4 | 149.62 | 99.9 | 0 |
+| Step_33_Inference | 15.06 | 41.86 | 7.9 | 284.92 | 100.0 | 0 |
 | Step_34_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_34_Inference | 6.88 | 41.86 | 12.9 | 149.05 | 100.0 | 0 |
+| Step_34_Inference | 15.05 | 41.86 | 8.0 | 284.87 | 100.0 | 0 |
 | Step_35_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_35_Inference | 6.88 | 41.86 | 12.8 | 149.18 | 99.8 | 0 |
-| Step_36_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_36_Inference | 6.88 | 41.86 | 13.3 | 148.78 | 100.0 | 0 |
+| Step_35_Inference | 15.06 | 41.86 | 8.0 | 284.83 | 100.0 | 0 |
+| Step_36_Loading | 0.00 | 32.14 | 0.0 | 284.66 | 0.0 | 0 |
+| Step_36_Inference | 15.05 | 41.86 | 7.1 | 284.68 | 100.0 | 0 |
 | Step_37_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_37_Inference | 6.88 | 41.86 | 13.2 | 148.85 | 99.8 | 0 |
+| Step_37_Inference | 15.06 | 41.86 | 6.5 | 284.69 | 100.0 | 0 |
 | Step_38_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_38_Inference | 6.88 | 41.86 | 13.3 | 149.16 | 100.0 | 0 |
+| Step_38_Inference | 15.05 | 41.86 | 6.8 | 284.60 | 100.0 | 0 |
 | Step_39_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_39_Inference | 6.88 | 41.86 | 13.2 | 149.01 | 99.8 | 0 |
+| Step_39_Inference | 15.05 | 41.86 | 8.1 | 287.00 | 100.0 | 0 |
 | Step_40_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_40_Inference | 6.88 | 41.86 | 13.2 | 148.26 | 100.0 | 0 |
+| Step_40_Inference | 15.05 | 41.86 | 6.6 | 286.78 | 100.0 | 0 |
 | Step_41_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_41_Inference | 6.88 | 41.86 | 12.2 | 173.12 | 99.9 | 0 |
+| Step_41_Inference | 15.05 | 41.86 | 7.6 | 289.11 | 100.0 | 0 |
 | Step_42_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_42_Inference | 6.88 | 41.86 | 6.8 | 172.78 | 99.8 | 0 |
+| Step_42_Inference | 8.44 | 41.86 | 7.9 | 306.06 | 100.0 | 0 |
 | Step_43_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_43_Inference | 6.89 | 41.86 | 14.6 | 150.88 | 100.0 | 0 |
+| Step_43_Inference | 14.41 | 41.86 | 7.5 | 307.34 | 99.9 | 0 |
 | Step_44_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_44_Inference | 6.89 | 41.86 | 13.1 | 149.94 | 99.8 | 0 |
-| Step_45_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_45_Inference | 6.89 | 41.86 | 12.9 | 149.40 | 100.0 | 0 |
+| Step_44_Inference | 15.08 | 41.86 | 7.6 | 307.24 | 100.0 | 0 |
+| Step_45_Loading | 0.00 | 32.14 | 6.6 | 307.10 | 0.0 | 0 |
+| Step_45_Inference | 15.08 | 41.86 | 7.5 | 307.10 | 100.0 | 0 |
 | Step_46_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_46_Inference | 6.89 | 41.86 | 13.7 | 149.12 | 99.7 | 0 |
+| Step_46_Inference | 11.26 | 41.86 | 8.6 | 308.03 | 100.0 | 0 |
 | Step_47_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_47_Inference | 6.89 | 41.86 | 12.9 | 149.08 | 100.0 | 0 |
+| Step_47_Inference | 6.89 | 41.86 | 7.5 | 278.01 | 99.7 | 0 |
 | Step_48_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_48_Inference | 6.89 | 41.86 | 14.5 | 148.89 | 99.7 | 0 |
+| Step_48_Inference | 6.89 | 41.86 | 9.3 | 283.05 | 100.0 | 0 |
 | Step_49_Loading | 0.00 | 32.14 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_49_Inference | 6.89 | 41.86 | 13.3 | 147.25 | 99.9 | 0 |
-| VAE_Decoding | 24.04 | 52.76 | 13.0 | 147.83 | 99.4 | 0 |
-| Total_Execution | 415.62 | 52.76 | 13.7 | 174.62 | 88.9 | 0 |
+| Step_49_Inference | 6.88 | 41.86 | 16.8 | 293.29 | 99.6 | 0 |
+| VAE_Decoding | 24.08 | 52.76 | 18.8 | 302.98 | 99.3 | 0 |
+| Total_Execution | 707.03 | 52.76 | 8.9 | 330.96 | 98.4 | 0 |
 
 ### Inference Statistics
 
-- **Avg Time per Step**: 6.88 s
-- **Avg SM Activity**: 99.8 %
-- **Avg CPU Utilization**: 13.6 %
+- **Avg Time per Step**: 12.73 s
+- **Avg SM Activity**: 99.9 %
+- **Avg CPU Utilization**: 8.3 %
 - **Total Inference Load**: 0
 
 ### Performance Analysis
@@ -475,88 +274,9 @@ No significant bottlenecks detected. GPU utilization is healthy.
 - Peak GPU Memory reached 52.76 GB. High VRAM usage, close to 48GB limit on L40S.
 ---
 
-## Case: 03_Performance_Mode_720p
-
-- **Total Duration**: 154.41 s
-- **Peak GPU Memory**: 31.27 GB
-- **Total Compute Load**: 18325
-
-### Stage Breakdown
-
-| Stage | Time (s) | GPU Mem (GB) | CPU (%) | Sys Mem (GB) | SM Act (%) | Comp Load |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Unknown | 0.00 | 2.63 | 13.6 | 130.49 | 0.0 | 0 |
-| Unknown | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 2.63 | 22.6 | 121.38 | 0.0 | 0 |
-| Unknown | 0.00 | 21.34 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.12 | 12.2 | 121.25 | 85.7 | 600 |
-| Unknown | 0.00 | 21.48 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.22 | 12.2 | 120.96 | 100.0 | 684 |
-| Unknown | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 12.3 | 120.96 | 99.1 | 682 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 12.6 | 121.12 | 100.0 | 685 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 11.8 | 121.09 | 100.0 | 685 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 6.7 | 121.22 | 100.0 | 685 |
-| Unknown | 0.00 | 21.55 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 14.3 | 122.50 | 100.0 | 686 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 11.6 | 121.23 | 100.0 | 686 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 12.7 | 120.74 | 100.0 | 687 |
-| Unknown | 0.00 | 21.56 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 31.27 | 12.2 | 120.23 | 100.0 | 687 |
-| Unknown | 0.00 | 23.54 | 12.3 | 139.49 | 96.2 | 2300 |
-| Unknown | 0.00 | 31.27 | 13.4 | 140.88 | 60.0 | 9259 |
-
-### Performance Analysis
-
-**Bottlenecks Detected:**
-- Inference stage 'Step_0_Inference' has low SM activity (85.71%), check kernel efficiency.
-
-**Resource Usage Overview:**
-- Peak GPU Memory reached 31.27 GB. VRAM usage is within safe margins.
----
-
-## Case: 04_14B_Speed_Preview_480p
-
-- **Total Duration**: 342.30 s
-- **Peak GPU Memory**: 82.60 GB
-- **Total Compute Load**: 39080
-
-### Stage Breakdown
-
-| Stage | Time (s) | GPU Mem (GB) | CPU (%) | Sys Mem (GB) | SM Act (%) | Comp Load |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Unknown | 0.00 | 0.49 | 0.0 | 0.00 | 0.2 | 9 |
-| Unknown | 0.00 | 0.49 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 0.50 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 53.74 | 0.0 | 0.00 | 22.0 | 102 |
-| Unknown | 0.00 | 82.51 | 0.0 | 0.00 | 97.6 | 3552 |
-| Unknown | 0.00 | 53.83 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 82.57 | 0.0 | 0.00 | 100.0 | 3647 |
-| Unknown | 0.00 | 53.87 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 82.60 | 0.0 | 0.00 | 100.0 | 3664 |
-| Unknown | 0.00 | 53.87 | 0.0 | 0.00 | 0.0 | 0 |
-| Unknown | 0.00 | 82.60 | 0.0 | 0.00 | 100.0 | 3664 |
-| Unknown | 0.00 | 53.87 | 0.0 | 0.00 | 4.5 | 316 |
-| Unknown | 0.00 | 82.60 | 0.0 | 0.00 | 100.0 | 3635 |
-| Unknown | 0.00 | 8.64 | 0.0 | 0.00 | 99.9 | 913 |
-| Unknown | 0.00 | 82.60 | 0.0 | 0.00 | 57.2 | 19578 |
-
-### Performance Analysis
-
-No significant bottlenecks detected. GPU utilization is healthy.
-
-**Resource Usage Overview:**
-- Peak GPU Memory reached 82.60 GB. High VRAM usage, close to 48GB limit on L40S.
----
-
 ## Case: 04_15s_50steps_720p
 
-- **Total Duration**: 1238.48 s
+- **Total Duration**: 2197.13 s
 - **Peak GPU Memory**: 43.46 GB
 - **Total Compute Load**: 0
 
@@ -564,117 +284,117 @@ No significant bottlenecks detected. GPU utilization is healthy.
 
 | Stage | Time (s) | GPU Mem (GB) | CPU (%) | Sys Mem (GB) | SM Act (%) | Comp Load |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Model_Initialization | 38.48 | 2.63 | 18.6 | 200.71 | 0.0 | 0 |
+| Model_Initialization | 39.22 | 2.63 | 9.0 | 350.93 | 99.9 | 0 |
 | TI2V_Preprocess | 0.00 | 2.63 | 0.0 | 0.00 | 0.0 | 0 |
-| T5_Encoding | 13.26 | 2.63 | 31.6 | 225.08 | 0.4 | 0 |
-| Step_0_Loading | 0.00 | 21.43 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_0_Inference | 22.21 | 43.12 | 12.6 | 206.54 | 98.2 | 0 |
+| T5_Encoding | 13.03 | 2.63 | 16.9 | 341.71 | 98.7 | 0 |
+| Step_0_Loading | 0.01 | 21.43 | 0.0 | 0.00 | 0.0 | 0 |
+| Step_0_Inference | 48.78 | 43.12 | 7.5 | 341.37 | 100.0 | 0 |
 | Step_1_Loading | 0.00 | 21.73 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_1_Inference | 22.16 | 43.35 | 14.6 | 203.14 | 100.0 | 0 |
-| Step_2_Loading | 0.00 | 21.90 | 0.0 | 202.07 | 0.0 | 0 |
-| Step_2_Inference | 22.28 | 43.46 | 13.1 | 228.78 | 100.0 | 0 |
+| Step_1_Inference | 48.54 | 43.34 | 9.5 | 344.41 | 100.0 | 0 |
+| Step_2_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
+| Step_2_Inference | 48.55 | 43.46 | 7.9 | 344.47 | 100.0 | 0 |
 | Step_3_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_3_Inference | 22.31 | 43.46 | 13.1 | 208.99 | 99.7 | 0 |
+| Step_3_Inference | 48.40 | 43.46 | 6.0 | 342.47 | 100.0 | 0 |
 | Step_4_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_4_Inference | 22.34 | 43.46 | 16.0 | 203.86 | 99.9 | 0 |
+| Step_4_Inference | 48.38 | 43.46 | 6.3 | 342.33 | 100.0 | 0 |
 | Step_5_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_5_Inference | 22.37 | 43.46 | 13.2 | 203.09 | 100.0 | 0 |
+| Step_5_Inference | 48.45 | 43.46 | 13.3 | 342.44 | 100.0 | 0 |
 | Step_6_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_6_Inference | 22.38 | 43.46 | 13.1 | 228.57 | 100.0 | 0 |
+| Step_6_Inference | 48.51 | 43.46 | 13.4 | 344.61 | 100.0 | 0 |
 | Step_7_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_7_Inference | 22.38 | 43.46 | 9.2 | 209.62 | 100.0 | 0 |
+| Step_7_Inference | 48.50 | 43.46 | 7.8 | 325.70 | 100.0 | 0 |
 | Step_8_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_8_Inference | 22.35 | 43.46 | 3.7 | 176.88 | 100.0 | 0 |
+| Step_8_Inference | 48.48 | 43.46 | 8.6 | 329.68 | 100.0 | 0 |
 | Step_9_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_9_Inference | 22.33 | 43.46 | 2.6 | 174.84 | 99.9 | 0 |
+| Step_9_Inference | 48.44 | 43.46 | 10.2 | 331.55 | 100.0 | 0 |
 | Step_10_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_10_Inference | 22.34 | 43.46 | 2.7 | 199.84 | 100.0 | 0 |
+| Step_10_Inference | 48.46 | 43.46 | 12.1 | 332.37 | 100.0 | 0 |
 | Step_11_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_11_Inference | 22.34 | 43.46 | 3.6 | 180.81 | 100.0 | 0 |
+| Step_11_Inference | 48.45 | 43.46 | 13.7 | 341.52 | 100.0 | 0 |
 | Step_12_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_12_Inference | 22.35 | 43.46 | 5.0 | 174.29 | 99.9 | 0 |
+| Step_12_Inference | 48.48 | 43.46 | 7.8 | 326.37 | 100.0 | 0 |
 | Step_13_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_13_Inference | 22.35 | 43.46 | 3.4 | 200.74 | 100.0 | 0 |
+| Step_13_Inference | 48.47 | 43.46 | 8.0 | 326.06 | 100.0 | 0 |
 | Step_14_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_14_Inference | 22.36 | 43.46 | 2.6 | 175.67 | 100.0 | 0 |
+| Step_14_Inference | 48.47 | 43.46 | 8.0 | 326.01 | 100.0 | 0 |
 | Step_15_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_15_Inference | 22.36 | 43.46 | 2.6 | 174.90 | 99.9 | 0 |
-| Step_16_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_16_Inference | 22.36 | 43.46 | 2.6 | 174.54 | 99.9 | 0 |
+| Step_15_Inference | 48.47 | 43.46 | 8.0 | 325.96 | 100.0 | 0 |
+| Step_16_Loading | 0.00 | 21.90 | 7.2 | 325.88 | 0.0 | 0 |
+| Step_16_Inference | 48.47 | 43.46 | 8.0 | 326.02 | 100.0 | 0 |
 | Step_17_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_17_Inference | 22.36 | 43.46 | 3.4 | 178.89 | 99.9 | 0 |
+| Step_17_Inference | 48.48 | 43.46 | 7.8 | 325.98 | 100.0 | 0 |
 | Step_18_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_18_Inference | 22.36 | 43.46 | 4.9 | 181.26 | 99.9 | 0 |
+| Step_18_Inference | 48.49 | 43.46 | 8.8 | 326.03 | 100.0 | 0 |
 | Step_19_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_19_Inference | 22.35 | 43.46 | 8.0 | 135.48 | 99.9 | 0 |
-| Step_20_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_20_Inference | 22.33 | 43.46 | 2.7 | 157.90 | 100.0 | 0 |
-| Step_21_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_21_Inference | 22.32 | 43.46 | 2.6 | 132.11 | 100.0 | 0 |
+| Step_19_Inference | 48.47 | 43.46 | 9.5 | 327.52 | 100.0 | 0 |
+| Step_20_Loading | 0.00 | 21.90 | 12.7 | 326.19 | 0.0 | 0 |
+| Step_20_Inference | 48.47 | 43.46 | 7.9 | 326.21 | 100.0 | 0 |
+| Step_21_Loading | 0.00 | 21.90 | 0.0 | 326.08 | 0.0 | 0 |
+| Step_21_Inference | 48.45 | 43.46 | 8.1 | 328.75 | 100.0 | 0 |
 | Step_22_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_22_Inference | 22.32 | 43.46 | 3.7 | 131.52 | 99.9 | 0 |
-| Step_23_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_23_Inference | 22.32 | 43.46 | 2.6 | 131.33 | 99.9 | 0 |
+| Step_22_Inference | 48.48 | 43.46 | 8.5 | 330.91 | 100.0 | 0 |
+| Step_23_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 100.0 | 0 |
+| Step_23_Inference | 48.50 | 43.46 | 8.8 | 330.73 | 100.0 | 0 |
 | Step_24_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_24_Inference | 22.32 | 43.46 | 2.5 | 157.04 | 99.9 | 0 |
+| Step_24_Inference | 48.49 | 43.46 | 16.9 | 341.52 | 100.0 | 0 |
 | Step_25_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_25_Inference | 22.33 | 43.46 | 2.5 | 143.13 | 100.0 | 0 |
+| Step_25_Inference | 48.51 | 43.46 | 8.0 | 326.62 | 100.0 | 0 |
 | Step_26_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_26_Inference | 22.34 | 43.46 | 4.7 | 131.40 | 99.9 | 0 |
-| Step_27_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_27_Inference | 22.35 | 43.46 | 6.3 | 140.93 | 99.9 | 0 |
+| Step_26_Inference | 48.51 | 43.46 | 7.8 | 326.45 | 100.0 | 0 |
+| Step_27_Loading | 0.00 | 21.90 | 0.0 | 326.22 | 0.0 | 0 |
+| Step_27_Inference | 48.53 | 43.46 | 8.0 | 326.24 | 100.0 | 0 |
 | Step_28_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_28_Inference | 22.34 | 43.46 | 2.6 | 157.84 | 100.0 | 0 |
+| Step_28_Inference | 48.54 | 43.46 | 7.9 | 326.19 | 100.0 | 0 |
 | Step_29_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_29_Inference | 22.34 | 43.46 | 2.7 | 132.25 | 99.9 | 0 |
+| Step_29_Inference | 48.55 | 43.46 | 8.0 | 326.19 | 100.0 | 0 |
 | Step_30_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_30_Inference | 22.33 | 43.46 | 2.6 | 131.75 | 100.0 | 0 |
-| Step_31_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_31_Inference | 22.32 | 43.46 | 5.5 | 146.06 | 100.0 | 0 |
+| Step_30_Inference | 48.53 | 43.46 | 8.0 | 326.29 | 100.0 | 0 |
+| Step_31_Loading | 0.00 | 21.90 | 0.0 | 326.29 | 0.0 | 0 |
+| Step_31_Inference | 48.52 | 43.46 | 9.0 | 327.40 | 100.0 | 0 |
 | Step_32_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_32_Inference | 22.31 | 43.46 | 4.2 | 156.52 | 99.9 | 0 |
-| Step_33_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_33_Inference | 22.31 | 43.46 | 3.7 | 132.60 | 100.0 | 0 |
-| Step_34_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_34_Inference | 22.30 | 43.46 | 2.6 | 131.80 | 99.9 | 0 |
+| Step_32_Inference | 48.52 | 43.46 | 7.7 | 327.81 | 100.0 | 0 |
+| Step_33_Loading | 0.00 | 21.90 | 0.0 | 327.76 | 0.0 | 0 |
+| Step_33_Inference | 48.53 | 43.46 | 7.1 | 328.14 | 100.0 | 0 |
+| Step_34_Loading | 0.00 | 21.90 | 0.0 | 327.77 | 0.0 | 0 |
+| Step_34_Inference | 42.16 | 43.46 | 7.4 | 346.63 | 100.0 | 0 |
 | Step_35_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_35_Inference | 22.31 | 43.46 | 4.1 | 132.52 | 100.0 | 0 |
-| Step_36_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_36_Inference | 22.31 | 43.46 | 2.6 | 157.54 | 99.9 | 0 |
+| Step_35_Inference | 48.57 | 43.46 | 8.0 | 351.51 | 100.0 | 0 |
+| Step_36_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 100.0 | 0 |
+| Step_36_Inference | 45.07 | 43.46 | 11.2 | 370.40 | 100.0 | 0 |
 | Step_37_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_37_Inference | 22.32 | 43.46 | 4.2 | 132.09 | 100.0 | 0 |
+| Step_37_Inference | 22.43 | 43.46 | 8.8 | 352.13 | 99.9 | 0 |
 | Step_38_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_38_Inference | 22.32 | 43.46 | 5.5 | 131.89 | 99.9 | 0 |
+| Step_38_Inference | 22.44 | 43.46 | 15.6 | 321.91 | 100.0 | 0 |
 | Step_39_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_39_Inference | 22.33 | 43.46 | 3.6 | 133.24 | 99.9 | 0 |
-| Step_40_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 100.0 | 0 |
-| Step_40_Inference | 22.33 | 43.46 | 3.2 | 132.51 | 100.0 | 0 |
+| Step_39_Inference | 22.45 | 43.46 | 16.6 | 330.62 | 100.0 | 0 |
+| Step_40_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
+| Step_40_Inference | 22.46 | 43.46 | 7.3 | 327.41 | 99.8 | 0 |
 | Step_41_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_41_Inference | 22.34 | 43.46 | 5.5 | 111.84 | 100.0 | 0 |
+| Step_41_Inference | 22.46 | 43.46 | 6.0 | 315.35 | 100.0 | 0 |
 | Step_42_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_42_Inference | 22.33 | 43.46 | 3.5 | 117.97 | 100.0 | 0 |
+| Step_42_Inference | 22.46 | 43.46 | 6.2 | 334.36 | 100.0 | 0 |
 | Step_43_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_43_Inference | 22.32 | 43.46 | 4.3 | 119.71 | 99.9 | 0 |
+| Step_43_Inference | 22.47 | 43.46 | 7.5 | 334.31 | 100.0 | 0 |
 | Step_44_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_44_Inference | 22.30 | 43.46 | 1.9 | 119.43 | 99.9 | 0 |
+| Step_44_Inference | 22.47 | 43.46 | 10.2 | 335.46 | 100.0 | 0 |
 | Step_45_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_45_Inference | 22.29 | 43.46 | 9.3 | 166.89 | 100.0 | 0 |
+| Step_45_Inference | 22.47 | 43.46 | 6.2 | 335.36 | 99.9 | 0 |
 | Step_46_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_46_Inference | 22.29 | 43.46 | 3.2 | 162.72 | 99.9 | 0 |
+| Step_46_Inference | 22.46 | 43.46 | 5.5 | 300.44 | 99.8 | 0 |
 | Step_47_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_47_Inference | 22.29 | 43.46 | 1.8 | 162.62 | 100.0 | 0 |
+| Step_47_Inference | 22.44 | 43.46 | 10.1 | 301.14 | 100.0 | 0 |
 | Step_48_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_48_Inference | 22.29 | 43.46 | 2.1 | 162.86 | 100.0 | 0 |
+| Step_48_Inference | 22.43 | 43.46 | 5.8 | 291.42 | 100.0 | 0 |
 | Step_49_Loading | 0.00 | 21.90 | 0.0 | 0.00 | 0.0 | 0 |
-| Step_49_Inference | 22.29 | 43.46 | 3.5 | 163.18 | 99.9 | 0 |
-| VAE_Decoding | 53.75 | 25.97 | 3.5 | 186.73 | 99.8 | 0 |
-| Total_Execution | 1233.26 | 43.46 | 5.8 | 228.78 | 95.1 | 0 |
+| Step_49_Inference | 22.42 | 43.46 | 5.5 | 281.75 | 99.8 | 0 |
+| VAE_Decoding | 54.03 | 25.97 | 5.7 | 300.66 | 99.6 | 0 |
+| Total_Execution | 2196.92 | 43.46 | 8.8 | 370.40 | 99.6 | 0 |
 
 ### Inference Statistics
 
-- **Avg Time per Step**: 22.32 s
-- **Avg SM Activity**: 99.9 %
-- **Avg CPU Utilization**: 5.2 %
+- **Avg Time per Step**: 41.53 s
+- **Avg SM Activity**: 100.0 %
+- **Avg CPU Utilization**: 8.8 %
 - **Total Inference Load**: 0
 
 ### Performance Analysis

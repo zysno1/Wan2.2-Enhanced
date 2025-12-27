@@ -1,0 +1,153 @@
+================================================================================
+🚀 Wan2.2 Performance Analysis Report (ViT-Optimized)
+================================================================================
+
+[System Context]
+Device:       NVIDIA RTX PRO 6000 Blackwell Server Edition (94.98 GB)
+Software:     CUDA 12.8 | PyTorch 2.9.1+cu128
+Task Config:  ti2v-5B | 1280*704 | 361 Frames | 50 Steps
+Optimization: Offload=ON | Precision=FP16/FP32
+
+[Executive Summary]
+--------------------------------------------------------------------------------
+✅ Total Latency:       2197.13 s
+⚡ Generation Speed:    41.53 s/step (0.02 steps/s)
+📹 Video Throughput:    0.17 frames/s (0.15 MPx/s)
+💾 Peak Memory:         43.46 GB (45.8% of VRAM)
+🌡️  Avg GPU Activity:    0.0% (Compute Score: 0.0)
+
+[Detailed Pipeline Latency]
+--------------------------------------------------------------------------------
+1. Initialization     :  39.28 s (  1.8%)
+2. Text Encoding (T5) :  13.03 s (  0.6%)
+3. Denoising (DiT)    : 2076.54 s ( 94.5%)
+   - First Step       : 48.78 s
+   - Avg Step (Stable): 41.53 s
+4. VAE Decoding       :  54.03 s (  2.5%)
+
+[Memory Telemetry]
+--------------------------------------------------------------------------------
+Allocation Strategy: [Offload Active]
+- DiT Weights (Static): 18.80 GB
+- DiT Activation Peak : 0.00 GB
+- T5 Peak Usage       : 2.63 GB (Dynamic (Offloaded))
+- VAE Peak Usage      : 25.97 GB
+
+[Expert Recommendations]
+--------------------------------------------------------------------------------
+> ℹ️ Offloading is active. This reduces VRAM but may increase latency slightly due to PCI-e transfers.
+     Action: You have plenty of VRAM. Disable offloading (--offload_model False) for faster generation.
+> ℹ️ Step speed is < 1 step/s. Consider using Flash Attention 2 or FP8 quantization if supported.
+
+[Execution Trace Analysis]
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Stage Name                | Time (s) |  SM % |   Load | Mem Start |   Mem End |  Peak Mem |     Mem Δ | Comment
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Model_Initialization      |    39.22 |  99.9 |    0.0 |      0.00 |      2.63 |      2.63 |      2.63 | Sys Init
+TI2V_Preprocess           |     0.00 |   0.0 |    0.0 |      2.63 |      2.63 |      2.63 |      0.00 | 
+T5_Encoding               |    13.03 |  98.7 |    0.0 |      2.63 |      2.63 |      2.63 |      0.00 | Text Enc
+S0_Loading                |     0.01 |   0.0 |    0.0 |     21.43 |     21.43 |     21.43 |      0.00 | Cached/NoOp
+S0                        |    48.78 | 100.0 |    0.0 |     21.43 |     21.73 |     43.12 |      0.30 | Compute Heavy
+S1_Loading                |     0.00 |   0.0 |    0.0 |     21.73 |     21.73 |     21.73 |      0.00 | Cached/NoOp
+S1                        |    48.54 | 100.0 |    0.0 |     21.73 |     21.90 |     43.34 |      0.17 | Compute Heavy
+S2_Loading                |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S2                        |    48.55 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S3_Loading                |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S3                        |    48.40 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S4_Loading                |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S4                        |    48.38 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S5_Loading                |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S5                        |    48.45 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S6_Loading                |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S6                        |    48.51 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S7_Loading                |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S7                        |    48.50 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S8_Loading                |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S8                        |    48.48 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S9_Loading                |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S9                        |    48.44 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S10_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S10                       |    48.46 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S11_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S11                       |    48.45 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S12_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S12                       |    48.48 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S13_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S13                       |    48.47 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S14_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S14                       |    48.47 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S15_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S15                       |    48.47 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S16_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S16                       |    48.47 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S17_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S17                       |    48.48 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S18_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S18                       |    48.49 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S19_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S19                       |    48.47 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S20_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S20                       |    48.47 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S21_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S21                       |    48.45 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S22_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S22                       |    48.48 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S23_Loading               |     0.00 | 100.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S23                       |    48.50 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S24_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S24                       |    48.49 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S25_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S25                       |    48.51 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S26_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S26                       |    48.51 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S27_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S27                       |    48.53 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S28_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S28                       |    48.54 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S29_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S29                       |    48.55 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S30_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S30                       |    48.53 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S31_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S31                       |    48.52 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S32_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S32                       |    48.52 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S33_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S33                       |    48.53 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S34_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S34                       |    42.16 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S35_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S35                       |    48.57 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S36_Loading               |     0.00 | 100.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S36                       |    45.07 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S37_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S37                       |    22.43 |  99.9 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S38_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S38                       |    22.44 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S39_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S39                       |    22.45 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S40_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S40                       |    22.46 |  99.8 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S41_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S41                       |    22.46 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S42_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S42                       |    22.46 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S43_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S43                       |    22.47 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S44_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S44                       |    22.47 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S45_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S45                       |    22.47 |  99.9 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S46_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S46                       |    22.46 |  99.8 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S47_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S47                       |    22.44 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S48_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S48                       |    22.43 | 100.0 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+S49_Loading               |     0.00 |   0.0 |    0.0 |     21.90 |     21.84 |     21.90 |     -0.06 | Cached/NoOp
+S49                       |    22.42 |  99.8 |    0.0 |     21.84 |     21.90 |     43.46 |      0.06 | Compute Heavy
+VAE_Decoding              |    54.03 |  99.6 |    0.0 |      3.28 |      6.91 |     25.97 |      3.64 | Decoding
+Total_Execution           |  2196.92 |  99.6 |    0.0 |      0.00 |      2.64 |     43.46 |      2.64 | 
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Legend: SM% = SM Activity | Load = Duration * SM% | Mem values in GB
+================================================================================
