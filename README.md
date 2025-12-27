@@ -15,26 +15,18 @@
   - CUDA: 12.8
   - Flash Attention: 2.8.3
 
-## 3. 测试场景
-测试对象为 **Wan2.2-TI2V-5B** (图生视频任务)，覆盖以下典型应用场景：
+## 3. 测试场景与视频预览 (Test Scenarios & Previews)
 
-1.  **Speed Preview (快速预览)**
-    *   分辨率: 480p (832x480)
-    *   采样步数: 5 Steps
-    *   策略: Offload=True (显存优化)
-    *   *目的: 快速验证提示词效果*
+本次测试覆盖以下 4 个典型应用场景。每个场景均提供详细配置与生成的视频样例预览。
 
-2.  **Efficiency Mode (效率模式)**
-    *   分辨率: 720p (1280x720)
-    *   采样步数: 10 Steps
-    *   策略: Offload=True (开启显存卸载)
-    *   *目的: 在有限显存下生成标准质量视频*
+| 场景 (Scenario) | 详细配置 (Configuration) | 视频预览 (Video Preview) |
+| :--- | :--- | :--- |
+| **01. Speed Preview**<br>*(快速预览)* | - **分辨率**: 1280x704<br>- **采样步数**: 5 Steps<br>- **显存优化**: On (Offload Model)<br>- **用途**: 快速验证 Prompt 效果 | [▶️ 点击播放](assets/videos/01_Speed_Preview.mp4)<br>*(Size: 14MB)* |
+| **02. Efficiency Quality**<br>*(效率模式)* | - **分辨率**: 1280x704<br>- **采样步数**: 30 Steps<br>- **显存优化**: On<br>- **用途**: 平衡速度与质量的标准生成 | [▶️ 点击播放](assets/videos/02_Efficiency_Quality.mp4)<br>*(Size: 25MB)* |
+| **03. Max Quality**<br>*(极致质量)* | - **分辨率**: 1280x704<br>- **采样步数**: 50 Steps<br>- **显存优化**: Off (全显存加速)<br>- **用途**: 生产级高质量输出 | [▶️ 点击播放](assets/videos/03_Max_Quality.mp4)<br>*(Size: 13MB)* |
+| **04. Long Duration**<br>*(长视频测试)* | - **分辨率**: 1280x704<br>- **时长**: 15s (361 frames)<br>- **采样步数**: 50 Steps<br>- **显存优化**: On | [▶️ 点击播放](assets/videos/04_15s_Long_Duration.mp4)<br>*(Size: 27MB)* |
 
-3.  **Performance Mode (高性能模式)**
-    *   分辨率: 720p (1280x720)
-    *   采样步数: 10 Steps
-    *   策略: Offload=False (关闭显存卸载)
-    *   *目的: 测试最大显存占用与最低延迟*
+> **注意**: 视频文件存储在 `assets/videos/` 目录下，建议下载后观看以获得最佳体验。
 
 ## 4. 测试方案
 本项目集成 `PerformanceMonitor` 工具与自动化测试脚本 (`benchmark/run.py`)，采集以下核心指标：
