@@ -21,10 +21,10 @@
 
 | 场景 (Scenario) | 详细配置 (Configuration) | 视频预览 (Video Preview) |
 | :--- | :--- | :--- |
-| **01. Speed Preview**<br>*(快速预览)* | - **分辨率**: 1280x704<br>- **采样步数**: 5 Steps<br>- **显存优化**: On (Offload Model)<br>- **用途**: 快速验证 Prompt 效果 | <video src="assets/videos/01_Speed_Preview.mp4" controls width="100%"></video><br>*(Size: 14MB)* |
-| **02. Efficiency Quality**<br>*(效率模式)* | - **分辨率**: 1280x704<br>- **采样步数**: 30 Steps<br>- **显存优化**: On<br>- **用途**: 平衡速度与质量的标准生成 | <video src="assets/videos/02_Efficiency_Quality.mp4" controls width="100%"></video><br>*(Size: 25MB)* |
-| **03. Max Quality**<br>*(极致质量)* | - **分辨率**: 1280x704<br>- **采样步数**: 50 Steps<br>- **显存优化**: Off (全显存加速)<br>- **用途**: 生产级高质量输出 | <video src="assets/videos/03_Max_Quality.mp4" controls width="100%"></video><br>*(Size: 13MB)* |
-| **04. Long Duration**<br>*(长视频测试)* | - **分辨率**: 1280x704<br>- **时长**: 15s (361 frames)<br>- **采样步数**: 50 Steps<br>- **显存优化**: On | <video src="assets/videos/04_15s_Long_Duration.mp4" controls width="100%"></video><br>*(Size: 27MB)* |
+| **01. Speed Preview**<br>*(快速预览)* | - **分辨率**: 1280x704<br>- **采样步数**: 5 Steps<br>- **显存优化**: On (Offload Model)<br>- **用途**: 快速验证 Prompt 效果 | [▶️ Click to Watch (MP4)](assets/videos/01_Speed_Preview.mp4)<br>*(Size: 14MB)* |
+| **02. Efficiency Quality**<br>*(效率模式)* | - **分辨率**: 1280x704<br>- **采样步数**: 30 Steps<br>- **显存优化**: On<br>- **用途**: 平衡速度与质量的标准生成 | [▶️ Click to Watch (MP4)](assets/videos/02_Efficiency_Quality.mp4)<br>*(Size: 25MB)* |
+| **03. Max Quality**<br>*(极致质量)* | - **分辨率**: 1280x704<br>- **采样步数**: 50 Steps<br>- **显存优化**: Off (全显存加速)<br>- **用途**: 生产级高质量输出 | [▶️ Click to Watch (MP4)](assets/videos/03_Max_Quality.mp4)<br>*(Size: 13MB)* |
+| **04. Long Duration**<br>*(长视频测试)* | - **分辨率**: 1280x704<br>- **时长**: 15s (361 frames)<br>- **采样步数**: 50 Steps<br>- **显存优化**: On | [▶️ Click to Watch (MP4)](assets/videos/04_15s_Long_Duration.mp4)<br>*(Size: 27MB)* |
 
 > **注意**: 视频文件存储在 `assets/videos/` 目录下，建议下载后观看以获得最佳体验。
 
