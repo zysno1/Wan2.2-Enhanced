@@ -38,6 +38,7 @@ class StageMetrics:
     end_memory: int = 0
     gpu_utilization: float = 0.0
     sm_activity: float = 0.0  # New field for SM Activity
+    tensor_core_utilization: float = 0.0 # New field for Tensor Core Utilization
     cpu_utilization: float = 0.0 # New field for CPU Usage
     system_memory_peak: int = 0 # New field for System RAM Peak (bytes)
     
@@ -74,6 +75,7 @@ class PerformanceMonitor:
         # GPU Sampling
         self.gpu_samples = [] # (timestamp, util_percent)
         self.sm_samples = [] # (timestamp, sm_percent)
+        self.tensor_samples = [] # (timestamp, tensor_percent)
         self.cpu_samples = [] # (timestamp, cpu_percent)
         self.ram_samples = [] # (timestamp, used_bytes)
         self.running = True
@@ -99,41 +101,81 @@ class PerformanceMonitor:
     def _init_sm_monitor(self):
         """Initialize SM activity monitoring using DCGM or fallback to nvidia-smi dmon"""
         self.using_dcgm = False
+        self.dcgm_handle_obj = None
+        self.dcgm_group_obj = None
+        self.dcgm_field_group_obj = None
         
         # Try DCGM first
         if DCGM_AVAILABLE:
             try:
+                # Initialize DCGM library (load .so)
+                if hasattr(dcgm_structs, '_LoadDcgmLibrary'):
+                    dcgm_structs._LoadDcgmLibrary()
+                
                 # Connect to DCGM host engine (assumes it's running)
-                dcgm_agent.dcgmInit()
-                self.dcgm_handle = dcgm_agent.dcgmConnect("127.0.0.1:5555")
+                # Try standalone first
+                try:
+                    self.dcgm_handle_obj = pydcgm.DcgmHandle(ipAddress="127.0.0.1:5555")
+                    logging.info("Connected to standalone DCGM host engine.")
+                except Exception:
+                    logging.info("Could not connect to standalone DCGM, starting embedded agent...")
+                    self.dcgm_handle_obj = pydcgm.DcgmHandle(ipAddress=None)
+                    logging.info("Started embedded DCGM agent.")
                 
-                # Create a group
+                # Get System and Group
+                self.dcgm_system_obj = self.dcgm_handle_obj.GetSystem()
                 device_index = torch.cuda.current_device() if torch.cuda.is_available() else 0
+                
+                # Create a group with the device
                 group_name = f"wan_monitor_group_{str(time.time())}"
-                self.dcgm_group = dcgm_agent.dcgmGroupCreate(self.dcgm_handle, dcgm_structs.DCGM_GROUP_EMPTY, group_name)
+                self.dcgm_group_obj = self.dcgm_system_obj.GetGroupWithGpuIds(group_name, [device_index])
                 
-                # Add GPU to group
-                dcgm_agent.dcgmGroupAddEntity(self.dcgm_handle, self.dcgm_group, dcgm_fields.DCGM_FE_GPU, device_index)
+                # Define Fields
+                # We want Profiling fields: SM_ACTIVE and TENSOR_ACTIVE
+                # But they might fail if profiling module is not loaded.
                 
-                # Watch SM Activity field
                 self.sm_field_id = dcgm_fields.DCGM_FI_PROF_SM_ACTIVE
-                update_freq = 100000 # 100ms in microseconds
-                max_keep_age = 3600.0
-                max_keep_samples = 0
+                self.tensor_field_id = dcgm_fields.DCGM_FI_PROF_PIPE_TENSOR_ACTIVE
                 
-                dcgm_agent.dcgmWatchFields(self.dcgm_handle, self.dcgm_group, 
-                                          [self.sm_field_id], 
-                                          update_freq, max_keep_age, max_keep_samples)
+                # Try to watch profiling fields first
+                try:
+                    field_ids = [self.sm_field_id, self.tensor_field_id]
+                    field_group_name = f"wan_field_group_prof_{str(time.time())}"
+                    self.dcgm_field_group_obj = pydcgm.DcgmFieldGroup(self.dcgm_handle_obj, field_group_name, field_ids)
+                    
+                    update_freq = 100000 # 100ms
+                    max_keep_age = 3600.0
+                    max_keep_samples = 0
+                    
+                    self.dcgm_group_obj.samples.WatchFields(self.dcgm_field_group_obj, update_freq, max_keep_age, max_keep_samples)
+                    logging.info("DCGM: Profiling fields (SM, Tensor) enabled.")
+                    self.profiling_enabled = True
+                    
+                except Exception as e:
+                    logging.warning(f"DCGM Profiling fields failed (Tensor Core not available): {e}")
+                    logging.info("Falling back to standard metrics (GPU Util) for SM Activity.")
+                    
+                    # Fallback to standard GPU Util for SM Activity
+                    self.sm_field_id = dcgm_fields.DCGM_FI_DEV_GPU_UTIL
+                    self.tensor_field_id = None # Not available
+                    self.profiling_enabled = False
+                    
+                    field_ids = [self.sm_field_id]
+                    field_group_name = f"wan_field_group_std_{str(time.time())}"
+                    self.dcgm_field_group_obj = pydcgm.DcgmFieldGroup(self.dcgm_handle_obj, field_group_name, field_ids)
+                    
+                    self.dcgm_group_obj.samples.WatchFields(self.dcgm_field_group_obj, 100000, 3600.0, 0)
                 
+                # Start Monitoring Thread
                 self.using_dcgm = True
                 self.sm_thread = threading.Thread(target=self._monitor_sm_loop_dcgm, daemon=True)
                 self.sm_thread.start()
-                logging.info("DCGM SM Activity monitoring initialized successfully.")
+                logging.info("DCGM monitoring initialized successfully.")
                 return
+                
             except Exception as e:
-                logging.warning(f"Failed to initialize DCGM SM monitor: {e}. Falling back to nvidia-smi dmon.")
-                self.dcgm_handle = None
-                self.dcgm_group = None
+                logging.warning(f"Failed to initialize DCGM monitor: {e}. Falling back to nvidia-smi dmon.")
+                self.using_dcgm = False
 
         # Fallback to nvidia-smi dmon
         try:
@@ -154,25 +196,44 @@ class PerformanceMonitor:
 
     def _monitor_sm_loop_dcgm(self):
         """Loop to poll DCGM fields"""
-        if not hasattr(self, 'dcgm_handle') or not self.dcgm_handle:
+        if not self.using_dcgm:
             return
             
         device_index = torch.cuda.current_device() if torch.cuda.is_available() else 0
         
         while self.running:
             try:
-                dcgm_agent.dcgmUpdateAllFields(self.dcgm_handle, 1)
-                values = dcgm_agent.dcgmGetLatestValues(self.dcgm_handle, self.dcgm_group, self.sm_field_id)
+                # Update fields
+                # Use dcgm_agent directly if Handle method is missing
+                dcgm_agent.dcgmUpdateAllFields(self.dcgm_handle_obj.handle, 1)
                 
-                for val in values:
-                    if val.entityId == device_index and val.fieldId == self.sm_field_id:
-                        if val.status == 0: # DCGM_ST_OK
-                            # SM Active is a ratio (0.0 - 1.0)
-                            sm_val = val.value.dbl * 100.0
-                            self.sm_samples.append((time.time(), sm_val))
-                        break
+                # Get Latest Values
+                data = self.dcgm_group_obj.samples.GetLatest(self.dcgm_field_group_obj)
+                
+                # Parse
+                if device_index in data.values:
+                    gpu_data = data.values[device_index]
+                    
+                    # SM Activity
+                    if self.sm_field_id in gpu_data:
+                        val = gpu_data[self.sm_field_id][0]
+                        if not val.isBlank:
+                            # If profiling (SM_ACTIVE), it's ratio 0.0-1.0. 
+                            # If dev (GPU_UTIL), it's percent 0-100.
+                            if self.profiling_enabled:
+                                self.sm_samples.append((time.time(), val.value * 100.0))
+                            else:
+                                self.sm_samples.append((time.time(), float(val.value)))
+                    
+                    # Tensor Core
+                    if self.tensor_field_id and self.tensor_field_id in gpu_data:
+                        val = gpu_data[self.tensor_field_id][0]
+                        if not val.isBlank:
+                            self.tensor_samples.append((time.time(), val.value * 100.0))
+                            
             except Exception as e:
-                pass
+                logging.error(f"Error in DCGM loop: {e}")
+                time.sleep(1) # Backoff
             time.sleep(0.1)
 
     def _monitor_sm_loop_dmon(self):
@@ -224,14 +285,9 @@ class PerformanceMonitor:
         self.running = False
         
         # Cleanup DCGM
-        if hasattr(self, 'dcgm_handle') and self.dcgm_handle:
-            try:
-                if hasattr(self, 'dcgm_group') and self.dcgm_group:
-                    dcgm_agent.dcgmGroupDestroy(self.dcgm_handle, self.dcgm_group)
-                dcgm_agent.dcgmDisconnect(self.dcgm_handle)
-            except:
-                pass
-                
+        # pydcgm handles cleanup via destructors usually, but we can be explicit if needed.
+        pass
+        
         try:
             pynvml.nvmlShutdown()
         except:
@@ -263,53 +319,8 @@ class PerformanceMonitor:
         return 0
 
     def start_stage(self, name: str):
-        # Only reset peak stats if this is a top-level stage or we want to track peak within this specific stage
-        # However, resetting peak stats affects global state. 
-        # For nested stages, resetting peak stats might hide peaks from parent stages if not careful.
-        # But we want accurate peak for *this* stage.
-        # Strategy: Record current peak so far? No, simply reset is the standard way to measure peak *during* a window.
-        # But for nested:
-        # Parent Start -> Reset -> 0
-        #   Child Start -> Reset -> 0 (Parent's peak history lost!)
-        # So we cannot easily nest peak memory tracking using reset_peak_memory_stats() naively.
-        #
-        # Better approach: Read max_memory_allocated() at end, but we need to know the baseline.
-        # 
-        # If we want to support nesting, we should probably NOT reset peak stats on every start,
-        # OR we accept that 'peak_memory' is only valid for the innermost active stage if we reset.
-        # 
-        # Given the requirement, I will stick to a stack but be careful about resetting.
-        # Actually, for "Activation Memory", we want the peak delta.
-        # 
-        # Let's use a simpler approach: 
-        # We will NOT reset peak memory stats on nested calls. Only on top level?
-        # Or simply don't reset and just record `torch.cuda.max_memory_allocated()`. 
-        # But `max_memory_allocated` is monotonic increasing unless reset.
-        # If we don't reset, `peak` will be the global peak since last reset.
-        
-        # Compromise: We reset peak stats when starting a stage, but we need to handle the parent.
-        # Actually, for this task, the nesting is: Total -> [Preprocess, Encoding, Loop -> [Step]].
-        # The steps are sequential, not nested deep inside each other (except inside the loop).
-        # The "Total" wraps everything.
-        # If I reset at "Total" start, then "Step 1" start resets again, "Total" loses its peak info.
-        
-        # Modified Logic:
-        # We will maintain the stack.
-        # We will ONLY reset peak stats if the stack is empty (fresh start) or if explicitly requested.
-        # BUT, if we don't reset for inner stages, we can't measure the peak *specific* to that inner stage if a previous stage had a higher peak.
-        # 
-        # Solution: 
-        # We will reset peak stats at every start_stage.
-        # When a child stage finishes, we must bubble up its peak memory to the parent.
-        # Parent.peak = max(Parent.peak, Child.peak)
-        
         if torch.cuda.is_available():
              torch.cuda.synchronize()
-        
-        # Before resetting, if there is a parent, update its peak so far? 
-        # No, because we are about to reset the counter. The hardware counter is global.
-        # If we reset, the parent's view of "max memory since parent start" is cleared.
-        # So we must store the "max memory seen so far" in the parent object manually.
         
         current_max = self._get_max_memory_allocated()
         if self.stage_stack:
@@ -356,10 +367,16 @@ class PerformanceMonitor:
                 if sm_samples_stage:
                     stage.sm_activity = sum(sm_samples_stage) / len(sm_samples_stage)
                 else:
-                    # If duration < 1s, we might not have samples. 
-                    # Try to take the last known sample before end_time if close enough?
-                    # Or just 0.
                     stage.sm_activity = 0.0
+
+            # Calculate Tensor Core Utilization for this stage
+            if self.tensor_samples:
+                tensor_samples_stage = [util for t, util in self.tensor_samples
+                                       if t >= stage.start_time and t <= stage.end_time]
+                if tensor_samples_stage:
+                    stage.tensor_core_utilization = sum(tensor_samples_stage) / len(tensor_samples_stage)
+                else:
+                    stage.tensor_core_utilization = 0.0
 
             # Calculate CPU Utilization
             if self.cpu_samples:
@@ -385,13 +402,6 @@ class PerformanceMonitor:
             if self.stage_stack:
                 parent = self.stage_stack[-1]
                 parent.peak_memory = max(parent.peak_memory, stage.peak_memory)
-                
-                # Also, we need to consider that the 'reset' happened at the start of this child.
-                # So the 'peak' we just measured is valid. 
-                # But for the parent, there might have been a higher peak *before* the child started.
-                # We handled that in start_stage by saving `current_max` to parent.
-                # So parent.peak_memory is now max(peak_before_child, peak_during_child).
-                # This seems correct.
             
             return stage
         return None
@@ -403,6 +413,20 @@ class PerformanceMonitor:
             yield
         finally:
             self.end_stage()
+
+    def save_report(self, filename, args=None):
+        report = self.get_report(args)
+        
+        # Ensure directory exists
+        if os.path.dirname(filename):
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+            
+        try:
+            with open(filename, 'w') as f:
+                json.dump(report, f, indent=4)
+            logging.info(f"Performance report saved to {filename}")
+        except Exception as e:
+            logging.error(f"Failed to save performance report: {e}")
 
     def get_report(self, args=None):
         report = {
@@ -423,31 +447,20 @@ class PerformanceMonitor:
         
         for stage in self.events:
             stage_data = {
-                "stage": stage.name,
-                "duration_sec": round(stage.duration, 4),
-                "start_memory_mb": round(stage.start_memory / (1024**2), 2),
-                "end_memory_mb": round(stage.end_memory / (1024**2), 2),
-                "peak_memory_mb": round(stage.peak_memory / (1024**2), 2),
-                "memory_delta_mb": round(stage.memory_delta / (1024**2), 2),
-                "activation_memory_estimate_mb": round(stage.activation_memory / (1024**2), 2),
-                "gpu_utilization": round(stage.gpu_utilization, 2),
-                "sm_activity": round(stage.sm_activity, 2),
-                "cpu_utilization": round(stage.cpu_utilization, 2),
-                "system_memory_peak_gb": round(stage.system_memory_peak / (1024**3), 2),
-                "compute_efficiency": round(stage.compute_efficiency, 2),
-                "compute_load": round(stage.compute_load, 2)
+                "name": stage.name,
+                "duration": stage.duration,
+                "memory_delta_mb": stage.memory_delta / (1024**2),
+                "peak_memory_mb": stage.peak_memory / (1024**2),
+                "activation_memory_mb": stage.activation_memory / (1024**2),
+                "gpu_utilization": stage.gpu_utilization,
+                "sm_activity": stage.sm_activity,
+                "tensor_core_utilization": stage.tensor_core_utilization,
+                "cpu_utilization": stage.cpu_utilization,
+                "system_memory_peak_gb": stage.system_memory_peak / (1024**3),
+                "compute_efficiency_gflops_proxy": stage.compute_efficiency
             }
             report["stages"].append(stage_data)
             max_mem_used = max(max_mem_used, stage.peak_memory)
-
-        report["max_memory_used_gb"] = round(max_mem_used / (1024**3), 2)
+            
+        report["max_memory_used_mb"] = max_mem_used / (1024**2)
         return report
-
-    def save_report(self, filepath: str, args=None):
-        report = self.get_report(args)
-        try:
-            with open(filepath, 'w') as f:
-                json.dump(report, f, indent=4)
-            logging.info(f"Performance report saved to {filepath}")
-        except Exception as e:
-            logging.error(f"Failed to save performance report: {e}")

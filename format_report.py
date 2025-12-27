@@ -39,27 +39,27 @@ def format_report(report_path):
     total_time = data.get('total_duration', 0)
     
     # Initialization (Model Load + Preprocess)
-    init_stages = [s for s in stages if 'Initialization' in s['stage'] or 'Loading' in s['stage']]
-    init_time = sum(s['duration_sec'] for s in init_stages)
+    init_stages = [s for s in stages if 'Initialization' in s['name'] or 'Loading' in s['name']]
+    init_time = sum(s['duration'] for s in init_stages)
     
     # Text Encoder (T5)
-    t5_stages = [s for s in stages if 'T5' in s['stage']]
-    t5_time = sum(s['duration_sec'] for s in t5_stages)
+    t5_stages = [s for s in stages if 'T5' in s['name']]
+    t5_time = sum(s['duration'] for s in t5_stages)
     
     # Denoising (DiT) - The Core Loop
-    dit_stages = [s for s in stages if 'Inference' in s['stage'] and 'Step' in s['stage']]
-    dit_total_time = sum(s['duration_sec'] for s in dit_stages)
+    dit_stages = [s for s in stages if 'Inference' in s['name'] and 'Step' in s['name']]
+    dit_total_time = sum(s['duration'] for s in dit_stages)
     avg_step_time = dit_total_time / len(dit_stages) if dit_stages else 0
     steps_per_sec = 1.0 / avg_step_time if avg_step_time > 0 else 0
     
     # First Step Latency (Compilation Overhead)
     first_step_time = 0
     if dit_stages:
-        first_step_time = dit_stages[0]['duration_sec']
+        first_step_time = dit_stages[0]['duration']
 
     # VAE Decoding
-    vae_stages = [s for s in stages if 'VAE' in s['stage']]
-    vae_time = sum(s['duration_sec'] for s in vae_stages)
+    vae_stages = [s for s in stages if 'VAE' in s['name']]
+    vae_time = sum(s['duration'] for s in vae_stages)
     
     # Throughput
     # Video Frames Per Second (Generation only, excluding init)
@@ -86,8 +86,16 @@ def format_report(report_path):
     for i in range(len(stages)-1):
         prev = stages[i]
         curr = stages[i+1]
-        if 'Step_0' in curr['stage']:
-            diff = curr['start_memory_mb'] - prev['end_memory_mb']
+        if 'Step_0' in curr['name']:
+            # Reconstruct start/end memory from peak and activation/delta
+            # start = peak - activation
+            # end = start + delta
+            curr_start = curr['peak_memory_mb'] - curr.get('activation_memory_mb', 0)
+            
+            prev_start = prev['peak_memory_mb'] - prev.get('activation_memory_mb', 0)
+            prev_end = prev_start + prev.get('memory_delta_mb', 0)
+            
+            diff = curr_start - prev_end
             if diff > 1000: # Assuming jump > 1GB is the model
                 dit_base_mb = diff
                 break
@@ -185,32 +193,33 @@ def format_report(report_path):
     # Trace Loop
     prev_mem = 0
     for s in stages:
-        name = s['stage'].replace('Step_', 'S').replace('_Inference', '') # Abbreviate for table
+        name = s['name'].replace('Step_', 'S').replace('_Inference', '') # Abbreviate for table
         if len(name) > 25: name = name[:22] + "..."
         
-        dur = s['duration_sec']
+        dur = s['duration']
         sm = s.get('sm_activity', 0)
         load = s.get('compute_load', 0)
         
-        start_mem = s['start_memory_mb'] / 1024
-        end_mem = s['end_memory_mb'] / 1024
-        peak_mem = s['peak_memory_mb'] / 1024
+        # Reconstruct start/end memory
+        start_mem = (s['peak_memory_mb'] - s.get('activation_memory_mb', 0)) / 1024
         delta = s['memory_delta_mb'] / 1024
+        end_mem = start_mem + delta
+        peak_mem = s['peak_memory_mb'] / 1024
         
         # Heuristic Comment
         comment = ""
-        if "Loading" in s['stage'] and delta > 1.0:
+        if "Loading" in s['name'] and delta > 1.0:
             comment = "Model Load"
-        elif "Inference" in s['stage'] and sm > 80:
+        elif "Inference" in s['name'] and sm > 80:
             comment = "Compute Heavy"
-        elif "VAE" in s['stage']:
+        elif "VAE" in s['name']:
             comment = "Decoding"
-        elif "T5" in s['stage']:
+        elif "T5" in s['name']:
             comment = "Text Enc"
-        elif "Initialization" in s['stage']:
+        elif "Initialization" in s['name']:
             comment = "Sys Init"
             
-        if offload and "Loading" in s['stage'] and delta < 0.1:
+        if offload and "Loading" in s['name'] and delta < 0.1:
              comment = "Cached/NoOp"
 
         print(f"{name:<25} | {dur:>8.2f} | {sm:>5.1f} | {load:>6.1f} | {start_mem:>9.2f} | {end_mem:>9.2f} | {peak_mem:>9.2f} | {delta:>9.2f} | {comment}")

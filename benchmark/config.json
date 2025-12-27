@@ -7,8 +7,8 @@
   },
   "test_cases": [
     {
-      "name": "01_Speed_Preview_480p",
-      "description": "Low resolution, few steps for rapid prompt iteration",
+      "name": "01_Speed_Preview_704p",
+      "description": "Lower steps for rapid prompt iteration (704p)",
       "args": {
         "size": "1280*704",
         "frame_num": 161,
@@ -18,23 +18,34 @@
       }
     },
     {
-      "name": "02_Efficiency_Mode_720p",
-      "description": "Standard resolution with offloading to save VRAM",
+      "name": "02_Efficiency_Quality_704p",
+      "description": "High quality balanced with speed (30 steps)",
       "args": {
         "size": "1280*704",
         "frame_num": 161,
-        "sample_steps": 10,
+        "sample_steps": 30,
         "offload_model": true,
         "t5_cpu": true
       }
     },
     {
-      "name": "03_Performance_Mode_720p",
-      "description": "Standard resolution with offloading (Modified for L40S 48GB)",
+      "name": "03_Max_Quality_704p",
+      "description": "Ideal final quality matching model default (50 steps)",
       "args": {
         "size": "1280*704",
         "frame_num": 161,
-        "sample_steps": 10,
+        "sample_steps": 50,
+        "offload_model": false,
+        "t5_cpu": false
+      }
+    },
+    {
+      "name": "04_15s_50steps_720p",
+      "description": "Long duration test (15s, 50 steps, 720p)",
+      "args": {
+        "size": "1280*704",
+        "frame_num": 361,
+        "sample_steps": 50,
         "offload_model": true,
         "t5_cpu": true
       }

@@ -84,9 +84,9 @@ def analyze_reports(report_dir="benchmark/reports", output_file="benchmark_repor
                 peak_mem = max([s.get("peak_memory_mb", 0) for s in stages]) / 1024 if stages else 0
                 total_load = sum([s.get("compute_load", 0) for s in stages])
                 
-                inference_stages = [s for s in stages if 'Inference' in s['stage']]
+                inference_stages = [s for s in stages if 'Inference' in s.get('name', '')]
                 steps = len(inference_stages)
-                total_infer_time = sum(s['duration_sec'] for s in inference_stages)
+                total_infer_time = sum(s['duration'] for s in inference_stages)
                 s_per_step = total_infer_time / steps if steps > 0 else 0
                 
                 sm_values = [s.get('sm_activity', 0) for s in inference_stages]
@@ -163,10 +163,11 @@ def analyze_reports(report_dir="benchmark/reports", output_file="benchmark_repor
         inference_steps = []
         
         for stage in stages:
-            name = stage.get("stage", "Unknown")
-            duration = stage.get("duration_sec", 0)
+            name = stage.get("name", "Unknown")
+            duration = stage.get("duration", 0)
             mem_mb = stage.get("peak_memory_mb", 0)
             sm = stage.get("sm_activity", 0)
+            tensor = stage.get("tensor_core_utilization", 0)
             load = stage.get("compute_load", 0)
             cpu = stage.get("cpu_utilization", 0)
             sys_mem_gb = stage.get("system_memory_peak_gb", 0)
@@ -184,10 +185,10 @@ def analyze_reports(report_dir="benchmark/reports", output_file="benchmark_repor
         
         # Inference Statistics
         if inference_steps:
-            avg_step_time = sum(s['duration_sec'] for s in inference_steps) / len(inference_steps)
+            avg_step_time = sum(s['duration'] for s in inference_steps) / len(inference_steps)
             avg_step_sm = sum(s['sm_activity'] for s in inference_steps) / len(inference_steps)
             avg_step_cpu = sum(s.get('cpu_utilization', 0) for s in inference_steps) / len(inference_steps)
-            total_step_load = sum(s['compute_load'] for s in inference_steps)
+            total_step_load = sum(s.get('compute_load', 0) for s in inference_steps)
             
             unified_content += "### Inference Statistics\n\n"
             unified_content += f"- **Avg Time per Step**: {avg_step_time:.2f} s\n"
