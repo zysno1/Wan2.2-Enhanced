@@ -197,6 +197,54 @@ def analyze_reports(report_dir="benchmark/reports", output_file="benchmark_repor
             unified_content += f"- **Total Inference Load**: {total_step_load:.0f}\n\n"
             
         # Automated Analysis
+        unified_content += "### Model Component Memory Profile\n\n"
+        
+        # Heuristic Analysis of Memory Usage
+        # 1. Base Overhead: Model_Initialization peak
+        # 2. T5 Encoder: T5_Encoding peak - Model_Initialization peak (or previous stage)
+        # 3. Main Transformer + Cache: Step_0_Inference peak - T5_Encoding peak
+        # 4. VAE Decoder: VAE_Decoding peak (if available) - (Last Inference Step peak or similar)
+        
+        init_stage = next((s for s in stages if "Initialization" in s.get("name", "")), None)
+        t5_stage = next((s for s in stages if "T5_Encoding" in s.get("name", "")), None)
+        first_infer = next((s for s in stages if "Step_0_Inference" in s.get("name", "")), None)
+        vae_stage = next((s for s in stages if "VAE_Decoding" in s.get("name", "")), None)
+        
+        unified_content += "| Component | Est. Peak Mem (GB) | Est. Contribution (GB) | Notes |\n"
+        unified_content += "| :--- | :--- | :--- | :--- |\n"
+        
+        prev_peak = 0
+        
+        if init_stage:
+            peak = init_stage.get("peak_memory_mb", 0) / 1024
+            contrib = peak  # First stage, so contribution is the peak
+            unified_content += f"| Initialization | {peak:.2f} | {contrib:.2f} | Base PyTorch/System Overhead |\n"
+            prev_peak = peak
+            
+        if t5_stage:
+            peak = t5_stage.get("peak_memory_mb", 0) / 1024
+            contrib = peak - prev_peak
+            unified_content += f"| T5 Encoder | {peak:.2f} | {contrib:.2f} | Weights + Activations |\n"
+            prev_peak = peak
+            
+        if first_infer:
+            peak = first_infer.get("peak_memory_mb", 0) / 1024
+            contrib = peak - prev_peak
+            unified_content += f"| DiT Transformer | {peak:.2f} | {contrib:.2f} | Weights + KV Cache + Activations |\n"
+            # Note: This contribution might be negative if T5 is offloaded!
+            # If negative, it means T5 was unloaded and DiT is smaller than T5+Overhead? Unlikely for 5B.
+            # Or T5 memory was reclaimed.
+            prev_peak = peak
+            
+        if vae_stage:
+            peak = vae_stage.get("peak_memory_mb", 0) / 1024
+            # VAE typically runs after DiT.
+            # If DiT is unloaded, this might be small. If DiT stays, this adds up.
+            contrib = peak - prev_peak
+            unified_content += f"| VAE Decoder | {peak:.2f} | {contrib:.2f} | Weights + Large Feature Maps |\n"
+
+        unified_content += "\n"
+
         unified_content += "### Performance Analysis\n\n"
         
         # 1. Bottleneck Identification
