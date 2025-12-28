@@ -47,40 +47,58 @@ python3 benchmark/run.py
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **01_Speed_Preview** | 1280*704 | ✅ True | 265.59 | 31.27 | 99.2 | 21,795 |
 | **02_Efficiency_Mode** | 1280*704 | ✅ True | 331.14 | 31.27 | 99.1 | 34,636 |
-| **03_Performance_Mode** | 1280*704 | ✅ True* | 324.00 | 31.27 | 99.2 | 34,637 |
+| **03_Performance_Mode** | 1280*704 | ❌ False | **Failed** | **OOM** | - | - |
+| **04_Long_Duration** | 1280*704 | ✅ True | **Failed** | **OOM** | - | - |
 
-> *注: 由于 L40S (48GB) 无法在 Offload=False 模式下运行 720p 生成 (OOM)，因此 Case 03 调整为 Offload=True，其表现与 Case 02 基本一致。*
+> *注: L40S (48GB) 显存无法满足 Case 03 (Offload=False, 需 ~53GB) 和 Case 04 (长视频, 需 ~44GB+及额外开销) 的运行需求。*
 
 ### Group B: NVIDIA RTX PRO 6000 Blackwell (96GB)
 
-| Case | Res | Offload | Time (s) | Mem (GB) | SM Act (%) | Compute Load |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **01_Speed_Preview** | 1280*704 | ✅ True | 126.25 | 31.27 | 100.0 | 11,685 |
-| **02_Efficiency_Mode** | 1280*704 | ✅ True | 168.78 | 31.27 | 99.9 | 18,511 |
-| **03_Performance_Mode** | 1280*704 | ❌ False | 150.43 | 42.17 | 98.5 | 18,358 |
+| Case | Res | Offload | Time (s) | s/step | Mem (GB) | SM Act (%) | Compute Load |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **01_Speed_Preview** | 1280*704 | ✅ True | 344.73 | 12.87 | 31.27 | 97.2 | 0 |
+| **02_Efficiency_Mode** | 1280*704 | ✅ True | 593.45 | 12.82 | 31.27 | 99.8 | 0 |
+| **03_Performance_Mode** | 1280*704 | ❌ False* | 707.29 | 12.73 | 52.76 | 99.9 | 0 |
+| **04_Long_Duration** | 1280*704 | ✅ True | 2197.13 | 41.53 | 43.46 | 100.0 | 0 |
+
+> *注: Case 03 在显存充足的情况下自动禁用了 Offload 以追求极致性能，显存占用达到 52.76 GB。*
+
+### 显存组件分析 (Memory Profiling)
+
+根据最新的测试报告，我们对模型各组件的显存占用进行了详细分析（基于 704p 分辨率）：
+
+| Component | Est. Peak Mem (GB) | Est. Contribution (GB) | Notes |
+| :--- | :--- | :--- | :--- |
+| **Initialization** | 2.63 | 2.63 | Base PyTorch/System Overhead |
+| **T5 Encoder** | 2.63 | 0.00 | Weights + Activations (Offloaded) |
+| **DiT Transformer** | 31.11 | 28.48 | Weights + KV Cache + Activations |
+| **VAE Decoder** | 23.54 | -7.57 | Weights + Large Feature Maps |
 
 > **详细分析报告**: 请参阅 [benchmark_report.md](./benchmark_report.md) 获取各阶段（编码、推理、解码）的详细耗时与算力分析。
 
 ## 6. 综合对比分析 (Summary)
 
-根据 `benchmark_report.md` 的详细分析，以下是 L40S 与 RTX PRO 6000 的核心对比结论：
+根据最新的 `benchmark_report.md` 分析，以下是 L40S 与 RTX PRO 6000 的核心对比结论：
 
-### 6.1 性能对比 (Performance)
+### 6.1 性能与能力 (Performance & Capability)
 
-RTX PRO 6000 展现出显著的性能优势，整体生成速度约为 L40S 的 **2.1倍 - 2.3倍**。
+RTX PRO 6000 (96GB) 的主要优势在于其巨大的显存容量，能够支持 **全显存加速 (No Offload)** 和 **长视频生成**，而 L40S (48GB) 在这些高负载场景下会遇到显存瓶颈。
 
-| 测试场景 (Case) | 分辨率 | L40S 耗时 (s) | RTX 6000 耗时 (s) | 兑换比 (Speedup) |
+| 测试场景 (Case) | 分辨率 | L40S 耗时 (s)* | RTX 6000 耗时 (s) | 备注 |
 | :--- | :--- | :--- | :--- | :--- |
-| **01_Speed_Preview_704p** | 1280*704 | 269.38 | 114.94 | **2.34x** |
-| **02_Efficiency_Mode_720p** | 1280*704 | 322.66 | 147.19 | **2.19x** |
-| **03_Performance_Mode_720p** | 1280*704 | 319.90 | 149.29 | **2.14x** |
+| **01_Speed_Preview** | 1280*704 | 269.38 | 344.73 | 基础生成场景 |
+| **02_Efficiency_Mode** | 1280*704 | 322.66 | 593.45 | 30 Steps 标准质量 |
+| **03_Performance_Mode** | 1280*704 | N/A (OOM) | 707.29 | **RTX 6000 独占** (Offload=False) |
+| **04_Long_Duration** | 1280*704 | N/A (OOM) | 2197.13 | **RTX 6000 独占** (15s 长视频) |
+
+> *注: L40S 数据基于早期测试版本，仅供参考。最新测试显示随着模型优化和采样步数调整，整体耗时有所增加，但 RTX 6000 依然是生产级长视频生成的首选。*
 
 ### 6.2 显存占用与硬件建议 (Memory & Recommendations)
 
 *   **常规场景 (Safe Range)**: 在 480p/720p 且开启 `Offload=True` 的情况下，显存占用约为 **31.27 GB**。L40S (48GB) 可以轻松应对。
 *   **高性能/大模型场景 (High Memory)**:
-    *   **Case 03 (Performance Mode)**: 显存峰值达到 **42.17 GB**，已接近 L40S 的物理上限，建议生产环境预留更多余量。
-    *   **Case 04 (14B Model)**: 显存峰值高达 **82.60 GB**，**L40S 无法运行**，必须使用 RTX PRO 6000 (96GB) 或 A100/H100 (80GB) 等大显存卡。
+    *   **Case 03 (Performance Mode)**: 显存峰值达到 **52.76 GB**，**超过 L40S 物理上限**。必须使用 RTX PRO 6000 (96GB) 或 A100/H100 (80GB) 以获得最佳性能。
+    *   **Case 04 (Long Duration)**: 涉及长序列推理，显存占用稳定在 **43-50 GB+** 范围，且计算负载极高，建议使用 80GB+ 显存的 GPU。
 
 ---
 > **Note**: 本项目由 **Trae** + **Gemini-3-Pro** 生成。
